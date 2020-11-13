@@ -1,7 +1,7 @@
 Caffeinated
 -----------
 
-A Windows app inspired by [Caffine][1]. A small eye icon will appear in the System Tray which when toggled will enable and disable sleep. This project was originally created by [Desmond Brand][2] but was forked and is being updated by [TheJoeFin][3]. Part of the updates involved new icons which are still in the process of being refined. 
+A Windows app inspired by [Caffeine][1]. A small eye icon will appear in the System Tray which when toggled will enable and disable sleep. This project was originally created by [Desmond Brand][2] but was forked and is being updated by [TheJoeFin][3]. Part of the updates involved new icons which are still in the process of being refined. 
 
 ### How does it work
 When initally launched the settings page shows up and an icon is added to the System Tray
