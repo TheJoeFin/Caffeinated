@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using Caffeinated.Properties;
 
 namespace Caffeinated {
-    public class Duration {
+    public class Duration: IComparable {
         public int Minutes { get; set; }
         public string Description {
             get {
@@ -20,19 +20,46 @@ namespace Caffeinated {
             if (time == 0) {
                 return "Indefinitely";
             }
-            int mins = time % 60;
-            if (mins != 0) {
-                return String.Format("{0} minutes", mins);
-            }
-            else {
+            
+            string returnDescription = "";
+
+            if(time >= 60) {
                 int hours = time / 60;
                 if (hours == 1) {
-                    return "1 hour";
+                    returnDescription = "1 hr ";
                 }
                 else {
-                    return String.Format("{0} hours", hours);
+                    returnDescription = String.Format("{0} hrs ", hours);
                 }
             }
+            int mins = time % 60;
+            if(mins == 1) {
+                returnDescription += String.Format("{0} min", mins);
+            }
+            if (mins > 1) {
+                returnDescription += String.Format("{0} mins", mins);
+            }
+
+            return returnDescription;
+        }
+
+        public int CompareTo(object obj) {
+            if (obj == null) return 1;
+
+            Duration otherDuration = obj as Duration;
+
+            if (otherDuration != null)
+            {
+                if (otherDuration.Minutes > this.Minutes)
+                    return 1;
+                
+                if (otherDuration.Minutes < this.Minutes)
+                    return -1;
+
+                return 0;
+            }
+            else
+                return 1;
         }
     }
 
@@ -50,6 +77,7 @@ namespace Caffeinated {
         private Icon onIcon;
         private Icon offIcon;
         private uint? oldState = null;
+        private bool isActivated = false;
         private Timer timer;
         private SettingsForm settingsForm = null;
         private AboutForm aboutForm = null;
@@ -60,15 +88,84 @@ namespace Caffeinated {
             Application.Run(context);
         }
 
-        public AppContext() {
+        public AppContext()
+        {
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
+            
+            setIcons();
 
+            this.notifyIcon = new NotifyIcon(this.components);
+
+            setContextMenu();
+
+            // tooltip
+            notifyIcon.Text = "Caffeinated";
+            notifyIcon.Visible = true;
+
+            // Handle the DoubleClick event to activate the form.
+            notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
+
+            if (Settings.Default.ActivateAtLaunch)
+            {
+                activate(Settings.Default.DefaultDuration);
+            }
+            else
+            {
+                deactivate();
+            }
+            if (Settings.Default.ShowSettingsAtLaunch)
+            {
+                showSettings();
+            }
+        }
+
+        private void setIcons() {
+            switch (Settings.Default.Icon)
+            {
+                case "Mug":
+                    this.offIcon = new Icon(
+                        Properties.Resources.mug_sleep_icon,
+                        SystemInformation.SmallIconSize
+                    );
+                    this.onIcon = new Icon(
+                        Properties.Resources.mug_active_icon,
+                        SystemInformation.SmallIconSize
+                    );
+                    break;
+                case "Eye-ZZZ":
+                    this.offIcon = new Icon(
+                        Properties.Resources.Eye_zzz_Sleep_icon,
+                        SystemInformation.SmallIconSize
+                    );
+                    this.onIcon = new Icon(
+                        Properties.Resources.Eye_zzz_Active_icon,
+                        SystemInformation.SmallIconSize
+                    );
+                    break;
+                default:
+                    this.offIcon = new Icon(
+                        Properties.Resources.cup_coffee_icon_bw,
+                        SystemInformation.SmallIconSize
+                    );
+                    this.onIcon = new Icon(
+                        Properties.Resources.cup_coffee_icon,
+                        SystemInformation.SmallIconSize
+                    );
+                    break;
+            }
+        }
+
+        public void setContextMenu() {
             var contextMenu = new ContextMenu();
 
             var exitItem = new MenuItem("E&xit");
             exitItem.Click += new EventHandler(this.exitItem_Click);
+
+            // If the user deleted all time settings, add 0 back in.
+            if (Settings.Default.Durations.Length == 0)
+                Settings.Default.Durations = "0";
 
             // we want the lower durations to be closer to the mouse. So, 
             var times = Settings.Default.RealDurations;
@@ -87,7 +184,7 @@ namespace Caffeinated {
             aboutItem.Click += new EventHandler(aboutItem_Click);
 
             contextMenu.MenuItems.AddRange(
-                new MenuItem[] { 
+                new MenuItem[] {
                     settingsItem,
                     aboutItem,
                     exitItem,
@@ -98,39 +195,12 @@ namespace Caffeinated {
 
             foreach (var time in sortedTimes) {
                 var item = new MenuItem(Duration.ToDescription(time));
-                item.Tag = time; 
+                item.Tag = time;
                 item.Click += new EventHandler(item_Click);
                 contextMenu.MenuItems.Add(item);
             }
 
-            this.offIcon = new Icon(
-                Properties.Resources.cup_coffee_icon_bw,
-                SystemInformation.SmallIconSize
-            );
-            this.onIcon = new Icon(
-                Properties.Resources.cup_coffee_icon,
-                SystemInformation.SmallIconSize
-            );
-            this.notifyIcon = new NotifyIcon(this.components);
-
             notifyIcon.ContextMenu = contextMenu;
-
-            // tooltip
-            notifyIcon.Text = "Caffeinated";
-            notifyIcon.Visible = true;
-
-            // Handle the DoubleClick event to activate the form.
-            notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
-
-            if (Settings.Default.ActivateAtLaunch) {
-                activate(Settings.Default.DefaultDuration);
-            }
-            else {
-                deactivate();
-            }
-            if (Settings.Default.ShowSettingsAtLaunch) {
-                showSettings();
-            }
         }
 
         void aboutItem_Click(object sender, EventArgs e) {
@@ -144,7 +214,18 @@ namespace Caffeinated {
 
         void showSettings() {
             settingsForm = new SettingsForm();
+            settingsForm.FormClosing += SettingsForm_FormClosing;
             settingsForm.Show();
+        }
+
+        private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e) {
+            setContextMenu();
+            setIcons();
+
+            if (isActivated)
+                notifyIcon.Icon = onIcon;
+            else
+                notifyIcon.Icon = offIcon;
         }
 
         void timer_Tick(object sender, EventArgs e) {
@@ -188,6 +269,7 @@ namespace Caffeinated {
                 this.timer.Interval = duration * 60 * 1000;
                 this.timer.Start();
             }
+            this.isActivated = true;
             this.notifyIcon.Icon = onIcon;
             this.notifyIcon.Text = "Caffeinated: sleep not allowed!";
         }
@@ -201,6 +283,7 @@ namespace Caffeinated {
                     ShowError();
                 }
             }
+            this.isActivated = false;
             this.notifyIcon.Icon = offIcon;
             this.notifyIcon.Text = "Caffeinated: sleep allowed";
         }
