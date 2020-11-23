@@ -70,7 +70,7 @@
             this.label1.Location = new System.Drawing.Point(181, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(406, 200);
+            this.label1.Size = new System.Drawing.Size(560, 200);
             this.label1.TabIndex = 0;
             this.label1.Text = "Caffeinated is now running. You can find its icon in the notification area near t" +
     "he clock. Click it to keep your PC awake by disabling automatic sleep. Click the" +
@@ -90,7 +90,7 @@
             // 
             this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.okBtn.Location = new System.Drawing.Point(326, 894);
+            this.okBtn.Location = new System.Drawing.Point(501, 885);
             this.okBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.okBtn.Name = "okBtn";
             this.okBtn.Size = new System.Drawing.Size(124, 45);
@@ -104,7 +104,7 @@
             this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.cancelBtn.Location = new System.Drawing.Point(460, 894);
+            this.cancelBtn.Location = new System.Drawing.Point(635, 885);
             this.cancelBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.cancelBtn.Name = "cancelBtn";
             this.cancelBtn.Size = new System.Drawing.Size(124, 45);
@@ -423,7 +423,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.cancelBtn;
-            this.ClientSize = new System.Drawing.Size(603, 953);
+            this.ClientSize = new System.Drawing.Size(778, 944);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.cancelBtn);
