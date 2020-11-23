@@ -70,7 +70,7 @@
             this.label1.Location = new System.Drawing.Point(181, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(560, 200);
+            this.label1.Size = new System.Drawing.Size(584, 200);
             this.label1.TabIndex = 0;
             this.label1.Text = "Caffeinated is now running. You can find its icon in the notification area near t" +
     "he clock. Click it to keep your PC awake by disabling automatic sleep. Click the" +
@@ -79,7 +79,7 @@
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(181, 132);
+            this.label2.Location = new System.Drawing.Point(181, 168);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(406, 68);
@@ -133,7 +133,7 @@
             this.tableLayoutPanel1.Controls.Add(this.StartupChkBox, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 0, 7);
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel4, 0, 6);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(186, 187);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(186, 223);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 9;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
