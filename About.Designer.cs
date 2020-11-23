@@ -24,7 +24,7 @@
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.VersionTxtBlk = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.dmndLbl = new System.Windows.Forms.LinkLabel();
             this.caffeineLbl = new System.Windows.Forms.LinkLabel();
@@ -45,17 +45,17 @@
             this.pictureBox1.TabIndex = 11;
             this.pictureBox1.TabStop = false;
             // 
-            // label2
+            // VersionTxtBlk
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.VersionTxtBlk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(138, 268);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 25);
-            this.label2.TabIndex = 13;
-            this.label2.Text = "Version 1.1";
+            this.VersionTxtBlk.AutoSize = true;
+            this.VersionTxtBlk.Location = new System.Drawing.Point(118, 265);
+            this.VersionTxtBlk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.VersionTxtBlk.Name = "VersionTxtBlk";
+            this.VersionTxtBlk.Size = new System.Drawing.Size(131, 25);
+            this.VersionTxtBlk.TabIndex = 13;
+            this.VersionTxtBlk.Text = "Version X.X.X.X";
             // 
             // label3
             // 
@@ -99,11 +99,9 @@
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(119, 226);
+            this.label1.Location = new System.Drawing.Point(118, 217);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 30);
@@ -148,7 +146,7 @@
             this.Controls.Add(this.caffeineLbl);
             this.Controls.Add(this.dmndLbl);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.VersionTxtBlk);
             this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -170,7 +168,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label VersionTxtBlk;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel dmndLbl;
         private System.Windows.Forms.LinkLabel caffeineLbl;

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Forms;
 using System.Diagnostics;
 
@@ -19,6 +14,7 @@ namespace Caffeinated {
                 "http://desmondbrand.com/caffeinated";
             ForkedByTheJoeFinLink.Links[0].LinkData =
                 "https://github.com/TheJoeFin/Caffeinated";
+            VersionTxtBlk.Text = $"Version {ProductVersion}";
         }
 
         #region Assembly Attribute Accessors
@@ -38,7 +34,7 @@ namespace Caffeinated {
 
         public string AssemblyVersion {
             get {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                return Application.ProductVersion.ToString();
             }
         }
 
@@ -85,20 +81,17 @@ namespace Caffeinated {
 
         private void linkLbl_LinkClicked(
             object sender,
-            LinkLabelLinkClickedEventArgs e
-        ) {
+            LinkLabelLinkClickedEventArgs e) {
             string target = e.Link.LinkData as string;
             System.Diagnostics.Process.Start(target);
         }
 
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             string target = e.Link.LinkData as string;
             Process.Start(target);
         }
 
-        private void ForkedByTheJoeFinLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
+        private void ForkedByTheJoeFinLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
             string target = e.Link.LinkData as string;
             Process.Start(target);
         }
