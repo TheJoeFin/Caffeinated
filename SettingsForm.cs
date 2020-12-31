@@ -1,16 +1,21 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Caffeinated.Properties;
+using Microsoft.Win32;
 using Windows.ApplicationModel;
+using vm = Windows.UI.ViewManagement;
 
 namespace Caffeinated {
     public partial class SettingsForm : BaseForm {
         BindingList<Duration> Durations;
+        public Color AccentColor { get; set; }
+        public Color BaseHigh { get; set; }
         public SettingsForm() : base() {
             InitializeComponent();
             var durations = from i in Settings.Default.RealDurations
@@ -31,8 +36,62 @@ namespace Caffeinated {
             durationCM.MenuItems.Add(deleteMI);
             DefaultDurationBox.ContextMenu = durationCM;
 
+            getWindowsThemeColors();
+            GetAccentColor();
+
+            label1.BackColor = BaseHigh;
+            this.BackColor = BaseHigh;
+
+            label2.ForeColor = AccentColor;
             setStartupCheckBox();
             setRadioButtons();
+        }
+
+        private void getWindowsThemeColors()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\DWM"))
+                {
+                    if (key != null)
+                    {
+                        Object o = key.GetValue("AccentColor");
+                        if (o != null)
+                        {
+                            AccentColor = Color.FromArgb(getARGB((int)o));
+                        }
+
+                        Object ob = key.GetValue("BaseHigh");
+                        if (ob != null)
+                        {
+                            BaseHigh = Color.FromArgb(getARGB((int)ob));
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                //couldn't read color - not a problem in this case, we already defined a default color
+            }
+        }
+
+
+        void GetAccentColor()
+        {
+            var settings = new vm.UISettings();
+            Windows.UI.Color color = settings.GetColorValue(vm.UIColorType.Accent);
+            var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
+            BaseHigh = Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B);
+            // color.A, color.R, color.G, and color.B are the color channels.
+        }
+
+        private int getARGB(int iABGR)
+        {
+            return
+            ((iABGR >> 24) << 24) |          // alpha value stays where it is (top 8 bits)
+            ((iABGR >> 16) & 0xFF) |         // red value moves to the next 8 bits
+            ((iABGR >> 8) & 0xFF) << 8 |     // green value stays where it is
+            ((iABGR) & 0xFF) << 16;          // blue value in the lowest 8 bits
         }
 
         private void setRadioButtons() {
