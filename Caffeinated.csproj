@@ -135,6 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cup-coffee-icon.ico" />
+    <None Include="Resources\SleepEye-Black_icon.ico" />
+    <None Include="Resources\Mug-Sleep-Black_icon.ico" />
+    <None Include="Resources\Mug-Active-Black_icon.ico" />
+    <None Include="Resources\Eye-zzz-Sleep-Black.ico" />
+    <None Include="Resources\Eye-zzz-Active-Black-ICON.ico" />
     <None Include="Resources\SleepEye-Black.png" />
     <None Include="Resources\Eye-zzz-Active-icon.ico" />
     <None Include="Resources\Eye-zzz-Sleep-icon.ico" />
@@ -147,6 +152,7 @@
     <None Include="Resources\%24this.Icon.ico" />
     <Content Include="Resources\Caffeine-Black-512.png" />
     <None Include="Resources\Caffeine-Black-96.png" />
+    <None Include="Resources\Caffeine-Black_icon.ico" />
     <Content Include="Resources\cup-coffee-icon-64.png" />
     <Content Include="Resources\cup-coffee-icon-96.png" />
   </ItemGroup>

@@ -14,8 +14,7 @@ using vm = Windows.UI.ViewManagement;
 namespace Caffeinated {
     public partial class SettingsForm : BaseForm {
         BindingList<Duration> Durations;
-        public Color AccentColor { get; set; }
-        public Color BaseHigh { get; set; }
+
         public SettingsForm() : base() {
             InitializeComponent();
             var durations = from i in Settings.Default.RealDurations
@@ -36,39 +35,8 @@ namespace Caffeinated {
             durationCM.MenuItems.Add(deleteMI);
             DefaultDurationBox.ContextMenu = durationCM;
 
-            GetAccentColor();
-
-            this.BackColor = BaseHigh;
-            okBtn.BackColor = AccentColor;
-
-            label2.ForeColor = AccentColor;
             setStartupCheckBox();
             setRadioButtons();
-        }
-
-
-        void GetAccentColor()
-        {
-            var settings = new vm.UISettings();
-            Windows.UI.Color color = settings.GetColorValue(vm.UIColorType.Accent);
-            var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
-            BaseHigh = Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B);
-            // color.A, color.R, color.G, and color.B are the color channels.
-            string baseColorString = HexConverter(BaseHigh);
-
-            if (baseColorString == "#FFFFFF")
-                Debug.WriteLine("White Icon");
-
-            if (baseColorString == "#000000")
-                Debug.WriteLine("Black Icon");
-
-            var accent = settings.GetColorValue(vm.UIColorType.Accent);
-            AccentColor = Color.FromArgb(accent.A, accent.R, accent.G, accent.B);
-        }
-
-        private static String HexConverter(Color c)
-        {
-            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
         private void setRadioButtons() {
