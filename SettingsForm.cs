@@ -36,43 +36,14 @@ namespace Caffeinated {
             durationCM.MenuItems.Add(deleteMI);
             DefaultDurationBox.ContextMenu = durationCM;
 
-            getWindowsThemeColors();
             GetAccentColor();
 
-            label1.BackColor = BaseHigh;
             this.BackColor = BaseHigh;
+            okBtn.BackColor = AccentColor;
 
             label2.ForeColor = AccentColor;
             setStartupCheckBox();
             setRadioButtons();
-        }
-
-        private void getWindowsThemeColors()
-        {
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\DWM"))
-                {
-                    if (key != null)
-                    {
-                        Object o = key.GetValue("AccentColor");
-                        if (o != null)
-                        {
-                            AccentColor = Color.FromArgb(getARGB((int)o));
-                        }
-
-                        Object ob = key.GetValue("BaseHigh");
-                        if (ob != null)
-                        {
-                            BaseHigh = Color.FromArgb(getARGB((int)ob));
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                //couldn't read color - not a problem in this case, we already defined a default color
-            }
         }
 
 
@@ -83,15 +54,21 @@ namespace Caffeinated {
             var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
             BaseHigh = Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B);
             // color.A, color.R, color.G, and color.B are the color channels.
+            string baseColorString = HexConverter(BaseHigh);
+
+            if (baseColorString == "#FFFFFF")
+                Debug.WriteLine("White Icon");
+
+            if (baseColorString == "#000000")
+                Debug.WriteLine("Black Icon");
+
+            var accent = settings.GetColorValue(vm.UIColorType.Accent);
+            AccentColor = Color.FromArgb(accent.A, accent.R, accent.G, accent.B);
         }
 
-        private int getARGB(int iABGR)
+        private static String HexConverter(Color c)
         {
-            return
-            ((iABGR >> 24) << 24) |          // alpha value stays where it is (top 8 bits)
-            ((iABGR >> 16) & 0xFF) |         // red value moves to the next 8 bits
-            ((iABGR >> 8) & 0xFF) << 8 |     // green value stays where it is
-            ((iABGR) & 0xFF) << 16;          // blue value in the lowest 8 bits
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
         private void setRadioButtons() {
