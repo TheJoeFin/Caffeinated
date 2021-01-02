@@ -83,6 +83,16 @@ namespace Caffeinated.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Caffeine_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("Caffeine_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon cup_coffee_icon {
             get {
                 object obj = ResourceManager.GetObject("cup_coffee_icon", resourceCulture);
@@ -133,6 +143,16 @@ namespace Caffeinated.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Eye_zzz_Active_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("Eye_zzz_Active_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon Eye_zzz_Active_icon {
             get {
                 object obj = ResourceManager.GetObject("Eye_zzz_Active_icon", resourceCulture);
@@ -147,6 +167,16 @@ namespace Caffeinated.Properties {
             get {
                 object obj = ResourceManager.GetObject("Eye_zzz_Sleep_Black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Eye_zzz_Sleep_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("Eye_zzz_Sleep_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -173,6 +203,16 @@ namespace Caffeinated.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Mug_Active_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("Mug_Active_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon mug_active_icon {
             get {
                 object obj = ResourceManager.GetObject("mug_active_icon", resourceCulture);
@@ -193,6 +233,16 @@ namespace Caffeinated.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon Mug_Sleep_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("Mug_Sleep_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon mug_sleep_icon {
             get {
                 object obj = ResourceManager.GetObject("mug_sleep_icon", resourceCulture);
@@ -207,6 +257,16 @@ namespace Caffeinated.Properties {
             get {
                 object obj = ResourceManager.GetObject("SleepEye_Black", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SleepEye_Black_icon {
+            get {
+                object obj = ResourceManager.GetObject("SleepEye_Black_icon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

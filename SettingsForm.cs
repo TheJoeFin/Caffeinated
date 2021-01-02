@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Caffeinated.Properties;
 using Windows.ApplicationModel;
@@ -11,6 +9,7 @@ using Windows.ApplicationModel;
 namespace Caffeinated {
     public partial class SettingsForm : BaseForm {
         BindingList<Duration> Durations;
+
         public SettingsForm() : base() {
             InitializeComponent();
             var durations = from i in Settings.Default.RealDurations
@@ -36,8 +35,7 @@ namespace Caffeinated {
         }
 
         private void setRadioButtons() {
-            switch (Settings.Default.Icon)
-            {
+            switch (Settings.Default.Icon) {
                 case "Mug":
                     mugRDBTN.Checked = true;
                     break;
@@ -50,8 +48,7 @@ namespace Caffeinated {
             }
         }
 
-        private void DeleteMI_Click(object sender, EventArgs e)
-        {
+        private void DeleteMI_Click(object sender, EventArgs e) {
             Duration durationToDelete = DefaultDurationBox.SelectedItem as Duration;
 
             DialogResult result = MessageBox.Show(
@@ -60,8 +57,7 @@ namespace Caffeinated {
                     MessageBoxButtons.YesNo
                 );
 
-            switch (result)
-            {
+            switch (result) {
                 case DialogResult.None:
                     break;
                 case DialogResult.OK:
@@ -90,8 +86,7 @@ namespace Caffeinated {
             StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
             Debug.WriteLine("Startup is " + startupTask.State.ToString());
 
-            switch (startupTask.State)
-            {
+            switch (startupTask.State) {
                 case StartupTaskState.Disabled:
                     // Task is disabled but can be enabled.
                     StartupChkBox.Checked = false;
@@ -118,10 +113,7 @@ namespace Caffeinated {
             this.Close();
         }
 
-        private void DefaultDurationBox_SelectedIndexChanged(
-            object sender,
-            EventArgs e
-        ) {
+        private void DefaultDurationBox_SelectedIndexChanged(object sender,EventArgs e) {
             var item = DefaultDurationBox.SelectedItem as Duration;
             if (item != null) {
                 Settings.Default.DefaultDuration = item.Minutes;
@@ -150,8 +142,7 @@ namespace Caffeinated {
             int newDuration = 0;
             int.TryParse(CustomDurationTXBX.Text, out newDuration);
 
-            if ( newDuration < 0)
-            {
+            if ( newDuration < 0) {
                 CustomDurationTXBX.Text = "";
                 MessageBox.Show(
                     "Enter a positive number.",
@@ -161,8 +152,7 @@ namespace Caffeinated {
                 return;
             }
 
-            if (Settings.Default.RealDurations.Contains(newDuration))
-            {
+            if (Settings.Default.RealDurations.Contains(newDuration)) {
                 CustomDurationTXBX.Text = "";
                 MessageBox.Show(
                     $"{newDuration} is already a duration.",
@@ -172,16 +162,14 @@ namespace Caffeinated {
                 return;
             }
 
-            Duration newCustomDuration = new Duration
-            {
+            Duration newCustomDuration = new Duration {
                 Minutes = newDuration
             };
 
             Durations.Add(newCustomDuration);
             var sortedDurations = Durations.OrderByDescending(i => i).ToList();
             Durations.Clear();
-            foreach (var item in sortedDurations)
-            {
+            foreach (var item in sortedDurations) {
                 Durations.Add(item);
             }
             Settings.Default.RealDurations.Add(newDuration); 
@@ -190,18 +178,15 @@ namespace Caffeinated {
             CustomDurationTXBX.Text = "";            
         }
 
-        private void defaultRDBTN_Click(object sender, EventArgs e)
-        {
+        private void defaultRDBTN_Click(object sender, EventArgs e) {
             Settings.Default.Icon = "Default";
         }
 
-        private void eyeZZZRDBTN_Click(object sender, EventArgs e)
-        {
+        private void eyeZZZRDBTN_Click(object sender, EventArgs e) {
             Settings.Default.Icon = "Eye-ZZZ";
         }
 
-        private void mugRDBTN_Click(object sender, EventArgs e)
-        {
+        private void mugRDBTN_Click(object sender, EventArgs e) {
             Settings.Default.Icon = "Mug";
         }
     }

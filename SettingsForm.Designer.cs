@@ -67,6 +67,8 @@
             // 
             // label1
             // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.ForeColor = System.Drawing.Color.Black;
             this.label1.Location = new System.Drawing.Point(181, 20);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
@@ -78,6 +80,7 @@
             // 
             // label2
             // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
             this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(181, 168);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -89,6 +92,7 @@
             // okBtn
             // 
             this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.okBtn.BackColor = System.Drawing.Color.Transparent;
             this.okBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.okBtn.Location = new System.Drawing.Point(501, 885);
             this.okBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -96,12 +100,13 @@
             this.okBtn.Size = new System.Drawing.Size(124, 45);
             this.okBtn.TabIndex = 8;
             this.okBtn.Text = "Ok";
-            this.okBtn.UseVisualStyleBackColor = true;
+            this.okBtn.UseVisualStyleBackColor = false;
             this.okBtn.Click += new System.EventHandler(this.okBtn_Click);
             // 
             // cancelBtn
             // 
             this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cancelBtn.BackColor = System.Drawing.Color.Transparent;
             this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancelBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.cancelBtn.Location = new System.Drawing.Point(635, 885);
@@ -110,11 +115,12 @@
             this.cancelBtn.Size = new System.Drawing.Size(124, 45);
             this.cancelBtn.TabIndex = 9;
             this.cancelBtn.Text = "Cancel";
-            this.cancelBtn.UseVisualStyleBackColor = true;
+            this.cancelBtn.UseVisualStyleBackColor = false;
             this.cancelBtn.Click += new System.EventHandler(this.cancelBtn_Click);
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::Caffeinated.Properties.Resources.Caffeine_Black_96;
             this.pictureBox1.Location = new System.Drawing.Point(17, 20);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -125,6 +131,7 @@
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.BackColor = System.Drawing.Color.Transparent;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 5);

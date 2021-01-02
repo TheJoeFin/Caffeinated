@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Caffeinated.Properties;
+using vm = Windows.UI.ViewManagement;
 
 namespace Caffeinated {
     public class Duration: IComparable {
@@ -81,6 +82,7 @@ namespace Caffeinated {
         private Timer timer;
         private SettingsForm settingsForm = null;
         private AboutForm aboutForm = null;
+        private bool isLightTheme = false;
 
         [STAThread]
         static void Main() {
@@ -88,11 +90,12 @@ namespace Caffeinated {
             Application.Run(context);
         }
 
-        public AppContext()
-        {
+        public AppContext() {
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
+
+            SetIsLightTheme();
             
             setIcons();
 
@@ -121,38 +124,90 @@ namespace Caffeinated {
             }
         }
 
+        void SetIsLightTheme() {
+            var settings = new vm.UISettings();
+            Windows.UI.Color color = settings.GetColorValue(vm.UIColorType.Accent);
+            var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
+            Color BaseHigh = Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B);
+            // color.A, color.R, color.G, and color.B are the color channels.
+            string baseColorString = HexConverter(BaseHigh);
+
+            if (baseColorString == "#FFFFFF")
+                isLightTheme = false;
+
+            if (baseColorString == "#000000")
+                isLightTheme = true;
+        }
+
+        private static String HexConverter(Color c) {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
+        }
+
         private void setIcons() {
-            switch (Settings.Default.Icon)
-            {
+            switch (Settings.Default.Icon) {
                 case "Mug":
-                    this.offIcon = new Icon(
-                        Properties.Resources.mug_sleep_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                    this.onIcon = new Icon(
-                        Properties.Resources.mug_active_icon,
-                        SystemInformation.SmallIconSize
-                    );
+                    if (isLightTheme){
+                        this.offIcon = new Icon(
+                            Properties.Resources.Mug_Sleep_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        this.onIcon = new Icon(
+                            Properties.Resources.Mug_Active_Black_icon,
+                            SystemInformation.SmallIconSize
+                            );
+                    } else{
+                        this.offIcon = new Icon(
+                            Properties.Resources.mug_sleep_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        this.onIcon = new Icon(
+                            Properties.Resources.mug_active_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+
                     break;
                 case "Eye-ZZZ":
-                    this.offIcon = new Icon(
-                        Properties.Resources.Eye_zzz_Sleep_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                    this.onIcon = new Icon(
-                        Properties.Resources.Eye_zzz_Active_icon,
-                        SystemInformation.SmallIconSize
-                    );
+                    if (isLightTheme){
+                        this.offIcon = new Icon(
+                            Properties.Resources.Eye_zzz_Sleep_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        this.onIcon = new Icon(
+                            Properties.Resources.Eye_zzz_Active_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    } else {
+                        this.offIcon = new Icon(
+                            Properties.Resources.Eye_zzz_Sleep_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        this.onIcon = new Icon(
+                            Properties.Resources.Eye_zzz_Active_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
                     break;
                 default:
-                    this.offIcon = new Icon(
-                        Properties.Resources.cup_coffee_icon_bw,
+                    if (isLightTheme) {
+                        this.offIcon = new Icon(
+                        Properties.Resources.Caffeine_Black_icon,
                         SystemInformation.SmallIconSize
                     );
-                    this.onIcon = new Icon(
-                        Properties.Resources.cup_coffee_icon,
-                        SystemInformation.SmallIconSize
-                    );
+                        this.onIcon = new Icon(
+                            Properties.Resources.SleepEye_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    } else {
+                        this.offIcon = new Icon(
+                            Properties.Resources.cup_coffee_icon_bw,
+                            SystemInformation.SmallIconSize
+                        );
+                        this.onIcon = new Icon(
+                            Properties.Resources.cup_coffee_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
                     break;
             }
         }
@@ -220,6 +275,7 @@ namespace Caffeinated {
 
         private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e) {
             setContextMenu();
+            SetIsLightTheme();
             setIcons();
 
             if (isActivated)
