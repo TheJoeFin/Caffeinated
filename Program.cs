@@ -90,8 +90,7 @@ namespace Caffeinated {
             Application.Run(context);
         }
 
-        public AppContext()
-        {
+        public AppContext() {
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
@@ -125,8 +124,7 @@ namespace Caffeinated {
             }
         }
 
-        void SetIsLightTheme()
-        {
+        void SetIsLightTheme() {
             var settings = new vm.UISettings();
             Windows.UI.Color color = settings.GetColorValue(vm.UIColorType.Accent);
             var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
@@ -141,14 +139,12 @@ namespace Caffeinated {
                 isLightTheme = true;
         }
 
-        private static String HexConverter(Color c)
-        {
+        private static String HexConverter(Color c) {
             return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
         private void setIcons() {
-            switch (Settings.Default.Icon)
-            {
+            switch (Settings.Default.Icon) {
                 case "Mug":
                     if (isLightTheme){
                         this.offIcon = new Icon(
@@ -279,6 +275,7 @@ namespace Caffeinated {
 
         private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e) {
             setContextMenu();
+            SetIsLightTheme();
             setIcons();
 
             if (isActivated)
