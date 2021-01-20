@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Caffeinated.Properties;
-using vm = Windows.UI.ViewManagement;
+using Microsoft.Win32;
 
 namespace Caffeinated {
     public class Duration: IComparable {
@@ -125,18 +125,23 @@ namespace Caffeinated {
         }
 
         void SetIsLightTheme() {
-            var settings = new vm.UISettings();
-            Windows.UI.Color color = settings.GetColorValue(vm.UIColorType.Accent);
-            var foreground = settings.GetColorValue(vm.UIColorType.Foreground);
-            Color BaseHigh = Color.FromArgb(foreground.A, foreground.R, foreground.G, foreground.B);
-            // color.A, color.R, color.G, and color.B are the color channels.
-            string baseColorString = HexConverter(BaseHigh);
-
-            if (baseColorString == "#FFFFFF")
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
+                    if (key != null) {
+                        Object o = key.GetValue("SystemUsesLightTheme");
+                        if (o != null) {
+                            if (o.ToString() == "1")
+                                isLightTheme = true;
+                            else
+                                isLightTheme = false;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
                 isLightTheme = false;
-
-            if (baseColorString == "#000000")
-                isLightTheme = true;
+            }
         }
 
         private static String HexConverter(Color c) {
