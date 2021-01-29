@@ -96,6 +96,9 @@ namespace Caffeinated {
             timer.Tick += new EventHandler(timer_Tick);
 
             SetIsLightTheme();
+
+            Settings.Default.Upgrade();
+            Settings.Default.Save();
             
             setIcons();
 
