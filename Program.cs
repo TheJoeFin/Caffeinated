@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -87,14 +88,24 @@ namespace Caffeinated {
         [STAThread]
         static void Main() {
             var context = new AppContext();
-            Application.Run(context);
+            if(context.notifyIcon == null)
+                Application.Exit();
+            else
+                Application.Run(context);
         }
 
         public AppContext() {
+            // Caffeinated.exe
+            var processes = Process.GetProcessesByName("Caffeinated");
+            if (processes.Length > 1)
+            {
+                // Is already running
+                return;
+            }
+
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
-
             SetIsLightTheme();
 
             Settings.Default.Upgrade();
@@ -128,8 +139,7 @@ namespace Caffeinated {
         }
 
         void SetIsLightTheme() {
-            try
-            {
+            try {
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
                     if (key != null) {
                         Object o = key.GetValue("SystemUsesLightTheme");
@@ -267,12 +277,15 @@ namespace Caffeinated {
         }
 
         void aboutItem_Click(object sender, EventArgs e) {
-            aboutForm = new AboutForm();
-            aboutForm.Show();
+            if (Application.OpenForms.OfType<AboutForm>().Any() == false) {
+                aboutForm = new AboutForm();
+                aboutForm.Show();
+            }
         }
 
         void settingsItem_Click(object sender, EventArgs e) {
-            showSettings();
+            if(Application.OpenForms.OfType<SettingsForm>().Any() == false)
+                showSettings();
         }
 
         void showSettings() {
