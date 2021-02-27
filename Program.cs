@@ -108,8 +108,9 @@ namespace Caffeinated {
             timer.Tick += new EventHandler(timer_Tick);
             SetIsLightTheme();
 
-            Settings.Default.Upgrade();
-            Settings.Default.Save();
+            // TODO: Looks like this is clearing custom durations. Need to look into this more.
+            // Settings.Default.Upgrade();
+            // Settings.Default.Save();
             
             setIcons();
 
