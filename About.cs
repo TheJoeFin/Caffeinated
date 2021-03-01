@@ -14,7 +14,7 @@ namespace Caffeinated {
                 "http://desmondbrand.com/caffeinated";
             ForkedByTheJoeFinLink.Links[0].LinkData =
                 "https://github.com/TheJoeFin/Caffeinated";
-            VersionTxtBlk.Text = $"Version {ProductVersion}";
+            // VersionTxtBlk.Text = $"Version {ProductVersion}";
         }
 
         #region Assembly Attribute Accessors

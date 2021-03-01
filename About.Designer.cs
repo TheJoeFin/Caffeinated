@@ -37,11 +37,12 @@
             // pictureBox1
             // 
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox1.Image = global::Caffeinated.Properties.Resources.Caffeine_Black_96;
-            this.pictureBox1.Location = new System.Drawing.Point(100, 22);
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(18, 22);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(172, 172);
+            this.pictureBox1.Size = new System.Drawing.Size(96, 96);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.pictureBox1.TabIndex = 11;
             this.pictureBox1.TabStop = false;
             // 
@@ -50,24 +51,23 @@
             this.VersionTxtBlk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.VersionTxtBlk.AutoSize = true;
-            this.VersionTxtBlk.Location = new System.Drawing.Point(118, 265);
+            this.VersionTxtBlk.Location = new System.Drawing.Point(17, 254);
             this.VersionTxtBlk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.VersionTxtBlk.Name = "VersionTxtBlk";
-            this.VersionTxtBlk.Size = new System.Drawing.Size(131, 25);
+            this.VersionTxtBlk.Size = new System.Drawing.Size(99, 25);
             this.VersionTxtBlk.TabIndex = 13;
-            this.VersionTxtBlk.Text = "Version X.X.X.X";
+            this.VersionTxtBlk.Text = "Version 1.4";
             // 
             // label3
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.Location = new System.Drawing.Point(8, 323);
+            this.label3.Location = new System.Drawing.Point(17, 298);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(364, 67);
+            this.label3.Size = new System.Drawing.Size(307, 67);
             this.label3.TabIndex = 14;
             this.label3.Text = "Prevents your PC from going to sleep or displaying the screen saver.";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // dmndLbl
             // 
@@ -86,22 +86,21 @@
             // 
             this.caffeineLbl.AutoSize = true;
             this.caffeineLbl.LinkArea = new System.Windows.Forms.LinkArea(12, 17);
-            this.caffeineLbl.Location = new System.Drawing.Point(67, 390);
+            this.caffeineLbl.Location = new System.Drawing.Point(17, 365);
             this.caffeineLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.caffeineLbl.Name = "caffeineLbl";
             this.caffeineLbl.Size = new System.Drawing.Size(246, 30);
             this.caffeineLbl.TabIndex = 18;
             this.caffeineLbl.TabStop = true;
             this.caffeineLbl.Text = "Inspired by Caffeine for OS X.";
-            this.caffeineLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.caffeineLbl.UseCompatibleTextRendering = true;
             this.caffeineLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_LinkClicked);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(118, 217);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(17, 209);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(133, 30);
