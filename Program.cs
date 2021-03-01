@@ -232,9 +232,9 @@ namespace Caffeinated {
         }
 
         public void setContextMenu() {
-            var contextMenu = new ContextMenu();
+            var contextMenu = new ContextMenuStrip();
 
-            var exitItem = new MenuItem("E&xit");
+            var exitItem = new ToolStripMenuItem("E&xit");
             exitItem.Click += new EventHandler(this.exitItem_Click);
 
             // If the user deleted all time settings, add 0 back in.
@@ -251,30 +251,31 @@ namespace Caffeinated {
                 sortedTimes = times.OrderByDescending(i => i);
             }
 
-            var settingsItem = new MenuItem("&Settings...");
+            var settingsItem = new ToolStripMenuItem("&Settings...");
             settingsItem.Click += new EventHandler(settingsItem_Click);
 
-            var aboutItem = new MenuItem("&About...");
+            var aboutItem = new ToolStripMenuItem("&About...");
             aboutItem.Click += new EventHandler(aboutItem_Click);
 
-            contextMenu.MenuItems.AddRange(
-                new MenuItem[] {
+            contextMenu.Items.AddRange(
+                new ToolStripMenuItem[] {
                     settingsItem,
                     aboutItem,
                     exitItem,
-                    new MenuItem("-"),
+                    // new ToolStripMenuItem("-"),
                     //activateForItem, 
                 }
             );
+            contextMenu.Items.Add(new ToolStripSeparator());
 
             foreach (var time in sortedTimes) {
-                var item = new MenuItem(Duration.ToDescription(time));
+                var item = new ToolStripMenuItem(Duration.ToDescription(time));
                 item.Tag = time;
                 item.Click += new EventHandler(item_Click);
-                contextMenu.MenuItems.Add(item);
+                contextMenu.Items.Add(item);
             }
 
-            notifyIcon.ContextMenu = contextMenu;
+            notifyIcon.ContextMenuStrip = contextMenu;
         }
 
         void aboutItem_Click(object sender, EventArgs e) {
@@ -311,7 +312,7 @@ namespace Caffeinated {
         }
 
         void item_Click(object sender, EventArgs e) {
-            int time = (int)((MenuItem)sender).Tag;
+            int time = (int)((ToolStripMenuItem)sender).Tag;
             this.activate(time);
         }
 

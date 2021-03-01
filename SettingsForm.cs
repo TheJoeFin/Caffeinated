@@ -24,11 +24,11 @@ namespace Caffeinated {
             DefaultDurationBox.ValueMember = "Minutes";
             DefaultDurationBox.SelectedItem = defaultItem;
 
-            MenuItem deleteMI = new MenuItem("Delete Duration");
+            ToolStripMenuItem deleteMI = new ToolStripMenuItem("Delete Duration");
             deleteMI.Click += DeleteMI_Click;
-            ContextMenu durationCM = new ContextMenu();
-            durationCM.MenuItems.Add(deleteMI);
-            DefaultDurationBox.ContextMenu = durationCM;
+            ContextMenuStrip durationCM = new ContextMenuStrip();
+            durationCM.Items.Add(deleteMI);
+            DefaultDurationBox.ContextMenuStrip = durationCM;
 
             setStartupCheckBox();
             setRadioButtons();
