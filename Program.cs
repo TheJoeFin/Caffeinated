@@ -87,11 +87,14 @@ namespace Caffeinated {
 
         [STAThread]
         static void Main() {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             var context = new AppContext();
             if(context.notifyIcon == null)
                 Application.Exit();
             else
                 Application.Run(context);
+            
         }
 
         public AppContext() {

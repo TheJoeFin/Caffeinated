@@ -9,6 +9,7 @@
     <RootNamespace>Caffeinated</RootNamespace>
     <AssemblyName>Caffeinated</AssemblyName>
     <StartupObject>Caffeinated.AppContext</StartupObject>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,5 +39,4 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.2" />
   </ItemGroup>
-
 </Project>
