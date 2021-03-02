@@ -109,15 +109,9 @@ namespace Caffeinated {
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
             SetIsLightTheme();
-
-            // TODO: Looks like this is clearing custom durations. Need to look into this more.
-            // Settings.Default.Upgrade();
-            // Settings.Default.Save();
             
             setIcons();
-
             this.notifyIcon = new NotifyIcon(this.components);
-
             setContextMenu();
 
             // tooltip
@@ -128,17 +122,12 @@ namespace Caffeinated {
             notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
 
             if (Settings.Default.ActivateAtLaunch)
-            {
                 activate(Settings.Default.DefaultDuration);
-            }
-            else
-            {
+            else 
                 deactivate();
-            }
-            if (Settings.Default.ShowSettingsAtLaunch)
-            {
+
+            if (Settings.Default.ShowSettingsAtLaunch) 
                 showSettings();
-            }
         }
 
         void SetIsLightTheme() {
@@ -263,9 +252,7 @@ namespace Caffeinated {
                 new ToolStripMenuItem[] {
                     settingsItem,
                     aboutItem,
-                    exitItem,
-                    // new ToolStripMenuItem("-"),
-                    //activateForItem, 
+                    exitItem
                 }
             );
             contextMenu.Items.Add(new ToolStripSeparator());
