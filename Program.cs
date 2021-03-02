@@ -78,7 +78,6 @@ namespace Caffeinated {
         private IContainer components;
         private Icon onIcon;
         private Icon offIcon;
-        private uint? oldState = null;
         private bool isActivated = false;
         private Timer timer;
         private SettingsForm settingsForm = null;
@@ -342,8 +341,8 @@ namespace Caffeinated {
         void activate(int duration) {
             var sleepDisabled = NativeMethods.ES_CONTINUOUS |
                                 NativeMethods.ES_DISPLAY_REQUIRED;
-            oldState = NativeMethods.SetThreadExecutionState(sleepDisabled);
-            if (oldState == 0) {
+            uint previousState = NativeMethods.SetThreadExecutionState(sleepDisabled);
+            if (previousState == 0) {
                 ShowError();
                 ExitThread();
             }
@@ -358,12 +357,9 @@ namespace Caffeinated {
 
         void deactivate() {
             timer.Stop();
-            if (oldState.HasValue) {
-                uint result = 
-                    NativeMethods.SetThreadExecutionState(oldState.Value);
-                if (result == 0) {
-                    ShowError();
-                }
+            uint result = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+            if (result == 0) {
+                ShowError();
             }
             this.isActivated = false;
             this.notifyIcon.Icon = offIcon;
