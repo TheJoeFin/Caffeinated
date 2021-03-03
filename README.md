@@ -23,7 +23,10 @@ The future plans of Caffeinated involve:
 
 Now Caffeinated can be accessed for free through the Microsoft Store under the name [Windows Caffeinated][4].
 
+The packaging resources can be accessed at [This Repo][5]
+
 [1]: http://lightheadsw.com/caffeine/
 [2]: http://desmondbrand.com/caffeinated/
 [3]: http://twitter.com/thejoefin
 [4]: https://www.microsoft.com/en-us/p/windows-caffeinated/9pbvhhsn78bl?activetab=pivot:overviewtab
+[5]: https://github.com/TheJoeFin/Caffeinated_Package
