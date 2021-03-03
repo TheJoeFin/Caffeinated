@@ -144,7 +144,7 @@ namespace Caffeinated {
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 isLightTheme = false;
             }
         }
