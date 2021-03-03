@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -77,7 +78,6 @@ namespace Caffeinated {
         private IContainer components;
         private Icon onIcon;
         private Icon offIcon;
-        private uint? oldState = null;
         private bool isActivated = false;
         private Timer timer;
         private SettingsForm settingsForm = null;
@@ -86,24 +86,32 @@ namespace Caffeinated {
 
         [STAThread]
         static void Main() {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
             var context = new AppContext();
-            Application.Run(context);
+            if(context.notifyIcon == null)
+                Application.Exit();
+            else
+                Application.Run(context);
+            
         }
 
         public AppContext() {
+            // Caffeinated.exe
+            var processes = Process.GetProcessesByName("Caffeinated");
+            if (processes.Length > 1)
+            {
+                // Is already running
+                return;
+            }
+
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
-
             SetIsLightTheme();
-
-            Settings.Default.Upgrade();
-            Settings.Default.Save();
             
             setIcons();
-
             this.notifyIcon = new NotifyIcon(this.components);
-
             setContextMenu();
 
             // tooltip
@@ -114,22 +122,16 @@ namespace Caffeinated {
             notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
 
             if (Settings.Default.ActivateAtLaunch)
-            {
                 activate(Settings.Default.DefaultDuration);
-            }
-            else
-            {
+            else 
                 deactivate();
-            }
-            if (Settings.Default.ShowSettingsAtLaunch)
-            {
+
+            if (Settings.Default.ShowSettingsAtLaunch) 
                 showSettings();
-            }
         }
 
         void SetIsLightTheme() {
-            try
-            {
+            try {
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
                     if (key != null) {
                         Object o = key.GetValue("SystemUsesLightTheme");
@@ -142,7 +144,7 @@ namespace Caffeinated {
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 isLightTheme = false;
             }
         }
@@ -221,9 +223,9 @@ namespace Caffeinated {
         }
 
         public void setContextMenu() {
-            var contextMenu = new ContextMenu();
+            var contextMenu = new ContextMenuStrip();
 
-            var exitItem = new MenuItem("E&xit");
+            var exitItem = new ToolStripMenuItem("E&xit");
             exitItem.Click += new EventHandler(this.exitItem_Click);
 
             // If the user deleted all time settings, add 0 back in.
@@ -240,39 +242,41 @@ namespace Caffeinated {
                 sortedTimes = times.OrderByDescending(i => i);
             }
 
-            var settingsItem = new MenuItem("&Settings...");
+            var settingsItem = new ToolStripMenuItem("&Settings...");
             settingsItem.Click += new EventHandler(settingsItem_Click);
 
-            var aboutItem = new MenuItem("&About...");
+            var aboutItem = new ToolStripMenuItem("&About...");
             aboutItem.Click += new EventHandler(aboutItem_Click);
 
-            contextMenu.MenuItems.AddRange(
-                new MenuItem[] {
+            contextMenu.Items.AddRange(
+                new ToolStripMenuItem[] {
                     settingsItem,
                     aboutItem,
-                    exitItem,
-                    new MenuItem("-"),
-                    //activateForItem, 
+                    exitItem
                 }
             );
+            contextMenu.Items.Add(new ToolStripSeparator());
 
             foreach (var time in sortedTimes) {
-                var item = new MenuItem(Duration.ToDescription(time));
+                var item = new ToolStripMenuItem(Duration.ToDescription(time));
                 item.Tag = time;
                 item.Click += new EventHandler(item_Click);
-                contextMenu.MenuItems.Add(item);
+                contextMenu.Items.Add(item);
             }
 
-            notifyIcon.ContextMenu = contextMenu;
+            notifyIcon.ContextMenuStrip = contextMenu;
         }
 
         void aboutItem_Click(object sender, EventArgs e) {
-            aboutForm = new AboutForm();
-            aboutForm.Show();
+            if (Application.OpenForms.OfType<AboutForm>().Any() == false) {
+                aboutForm = new AboutForm();
+                aboutForm.Show();
+            }
         }
 
         void settingsItem_Click(object sender, EventArgs e) {
-            showSettings();
+            if(Application.OpenForms.OfType<SettingsForm>().Any() == false)
+                showSettings();
         }
 
         void showSettings() {
@@ -297,7 +301,7 @@ namespace Caffeinated {
         }
 
         void item_Click(object sender, EventArgs e) {
-            int time = (int)((MenuItem)sender).Tag;
+            int time = (int)((ToolStripMenuItem)sender).Tag;
             this.activate(time);
         }
 
@@ -324,8 +328,8 @@ namespace Caffeinated {
         void activate(int duration) {
             var sleepDisabled = NativeMethods.ES_CONTINUOUS |
                                 NativeMethods.ES_DISPLAY_REQUIRED;
-            oldState = NativeMethods.SetThreadExecutionState(sleepDisabled);
-            if (oldState == 0) {
+            uint previousState = NativeMethods.SetThreadExecutionState(sleepDisabled);
+            if (previousState == 0) {
                 ShowError();
                 ExitThread();
             }
@@ -340,12 +344,9 @@ namespace Caffeinated {
 
         void deactivate() {
             timer.Stop();
-            if (oldState.HasValue) {
-                uint result = 
-                    NativeMethods.SetThreadExecutionState(oldState.Value);
-                if (result == 0) {
-                    ShowError();
-                }
+            uint result = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+            if (result == 0) {
+                ShowError();
             }
             this.isActivated = false;
             this.notifyIcon.Icon = offIcon;
