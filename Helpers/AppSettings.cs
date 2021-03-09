@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 
-namespace Caffeinated.Helpers
-{
-    public class AppSettings
-    {
+namespace Caffeinated.Helpers { 
+    public class AppSettings {
         Configuration configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
         KeyValueConfigurationCollection appSettings;
 
         private bool _activateOnLaunch;
 
-        public bool ActivateOnLaunch
-        {
+        public bool ActivateOnLaunch {
             get { return _activateOnLaunch; }
-            set 
-            { 
+            set { 
                 _activateOnLaunch = value;
                 appSettings[nameof(ActivateOnLaunch)].Value = _activateOnLaunch.ToString();
                 configFile.Save(ConfigurationSaveMode.Modified);
@@ -26,132 +23,105 @@ namespace Caffeinated.Helpers
 
         private bool _automaticallyLaunchWithWindows;
 
-        public bool AutomaticallyLaunchWithWindows
-        {
+        public bool AutomaticallyLaunchWithWindows {
             get { return _automaticallyLaunchWithWindows; }
-            set 
-            { 
+            set { 
                 _automaticallyLaunchWithWindows = value;
                 appSettings[nameof(AutomaticallyLaunchWithWindows)].Value = _automaticallyLaunchWithWindows.ToString();
                 configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
-
         private bool _showMessageOnLaunch;
 
-        public bool ShowMessageOnLaunch
-        {
+        public bool ShowMessageOnLaunch {
             get { return _showMessageOnLaunch; }
-            set 
-            { 
+            set { 
                 _showMessageOnLaunch = value;
                 appSettings[nameof(ShowMessageOnLaunch)].Value = _showMessageOnLaunch.ToString();
                 configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
-
         private int _defaultDuration;
 
-        public int DefaultDuration
-        {
+        public int DefaultDuration {
             get { return _defaultDuration; }
-            set 
-            { 
+            set { 
                 _defaultDuration = value; 
                 appSettings[nameof(DefaultDuration)].Value = _defaultDuration.ToString();
                 configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
-
         private TrayIcon _icon;
 
-        public TrayIcon Icon
-        {
+        public TrayIcon Icon {
             get { return _icon; }
-            set 
-            { 
+            set { 
                 _icon = value; 
                 appSettings[nameof(Icon)].Value = _icon.ToString();
                 configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
+        private ObservableCollection<int> _durations;
 
-        private List<int> _durations;
-
-        public List<int> Durations
-        {
+        public ObservableCollection<int> Durations {
             get { return _durations; }
-            set 
-            { 
+            set { 
                 _durations = value;
                 appSettings[nameof(Durations)].Value = string.Join(',',Durations.ToArray());
                 configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
-
-        public AppSettings()
-        {
+        public AppSettings() {
             appSettings = configFile.AppSettings.Settings;
 
-            try 
-            {
+            try {
                 string ActivateOnLaunchresult = appSettings[nameof(ActivateOnLaunch)].Value;
                 _activateOnLaunch = bool.Parse(ActivateOnLaunchresult);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _activateOnLaunch = false;
                 AddUpdateAppSettings(nameof(ActivateOnLaunch), _activateOnLaunch.ToString());
                 Console.WriteLine($"Error reading _activateOnLaunch app settings");
             }
 
-            try
-            {
+            try {
                 string AutomaticallyLaunchWithWindowsresult = appSettings[nameof(AutomaticallyLaunchWithWindows)].Value;
                 _automaticallyLaunchWithWindows = bool.Parse(AutomaticallyLaunchWithWindowsresult);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _automaticallyLaunchWithWindows = false;
                 AddUpdateAppSettings(nameof(AutomaticallyLaunchWithWindows), _automaticallyLaunchWithWindows.ToString());
                 Console.WriteLine("Error reading _automaticallyLaunchWithWindows app settings");
             }
 
-            try
-            {
+            try {
                 string ShowMessageOnLaunchresult = appSettings[nameof(ShowMessageOnLaunch)].Value;
                 _showMessageOnLaunch = bool.Parse(ShowMessageOnLaunchresult);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _showMessageOnLaunch = true;
                 AddUpdateAppSettings(nameof(ShowMessageOnLaunch), _showMessageOnLaunch.ToString());
                 Console.WriteLine($"Error reading _showMessageOnLaunch app settings");
             }
 
-            try
-            {
+            try {
                 string DefaultDurationresult = appSettings[nameof(DefaultDuration)].Value;
                 _defaultDuration = int.Parse(DefaultDurationresult);
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _defaultDuration = 0;
                 AddUpdateAppSettings(nameof(DefaultDuration), _defaultDuration.ToString());
                 Console.WriteLine("Error reading _defaultDuration app settings");
             }
 
-            try
-            {
+            try {
                 string Iconresult = appSettings[nameof(Icon)].Value;
-
-                switch (Iconresult)
-                {
+                switch (Iconresult) {
                     case "Mug":
                         _icon = TrayIcon.Mug;
                         break;
@@ -163,51 +133,48 @@ namespace Caffeinated.Helpers
                         break;
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception) {
                 _icon = TrayIcon.Default;
                 AddUpdateAppSettings(nameof(Icon), _icon.ToString());
                 Console.WriteLine($"Error reading Icon app settings");
             }
 
-            try
-            {
+            try {
                 string Durationsresult = appSettings[nameof(Durations)].Value;
                 List<string> splitResult = Durationsresult.Split(',').ToList();
 
-                _durations = new List<int>();
-                foreach (string item in splitResult)
-                {
+                _durations = new ObservableCollection<int>();
+                foreach (string item in splitResult) {
                     _durations.Add(int.Parse(item));
                 }
             }
-            catch (Exception)
-            {
-                _durations = new List<int> { 0, 15, 60, 120, 480 };
+            catch (Exception) {
+                _durations = new ObservableCollection<int> { 0, 15, 60, 120, 480 };
                 AddUpdateAppSettings(nameof(Durations), string.Join(',', _durations.ToArray()));
                 Console.WriteLine($"Error reading Durations app settings");
             }
+            Durations.CollectionChanged += Durations_CollectionChanged;
 
             configFile.Save(ConfigurationSaveMode.Modified);
         }
 
-        void AddUpdateAppSettings(string key, string value)
-        {
-            try
-            {
-                if (appSettings[key] == null)
-                {
+        private void Durations_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+            appSettings[nameof(Durations)].Value = string.Join(',', Durations.ToArray());
+            configFile.Save(ConfigurationSaveMode.Modified);
+        }
+
+        void AddUpdateAppSettings(string key, string value) {
+            try {
+                if (appSettings[key] == null) {
                     appSettings.Add(key, value);
                 }
-                else
-                {
+                else {
                     appSettings[key].Value = value;
                 }
                 configFile.Save(ConfigurationSaveMode.Modified);
                 ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
             }
-            catch (ConfigurationErrorsException)
-            {
+            catch (ConfigurationErrorsException) {
                 Console.WriteLine("Error writing app settings");
             }
         }
