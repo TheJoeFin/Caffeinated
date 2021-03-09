@@ -114,7 +114,6 @@ namespace Caffeinated {
         }
 
         private void okBtn_Click(object sender, EventArgs e) {
-            //Settings.Default.Save();
             this.Close();
         }
 

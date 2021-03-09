@@ -20,6 +20,7 @@ namespace Caffeinated.Helpers
             { 
                 _activateOnLaunch = value;
                 appSettings[nameof(ActivateOnLaunch)].Value = _activateOnLaunch.ToString();
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -32,6 +33,7 @@ namespace Caffeinated.Helpers
             { 
                 _automaticallyLaunchWithWindows = value;
                 appSettings[nameof(AutomaticallyLaunchWithWindows)].Value = _automaticallyLaunchWithWindows.ToString();
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -45,6 +47,7 @@ namespace Caffeinated.Helpers
             { 
                 _showMessageOnLaunch = value;
                 appSettings[nameof(ShowMessageOnLaunch)].Value = _showMessageOnLaunch.ToString();
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -58,6 +61,7 @@ namespace Caffeinated.Helpers
             { 
                 _defaultDuration = value; 
                 appSettings[nameof(DefaultDuration)].Value = _defaultDuration.ToString();
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -71,6 +75,7 @@ namespace Caffeinated.Helpers
             { 
                 _icon = value; 
                 appSettings[nameof(Icon)].Value = _icon.ToString();
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -84,6 +89,7 @@ namespace Caffeinated.Helpers
             { 
                 _durations = value;
                 appSettings[nameof(Durations)].Value = string.Join(',',Durations.ToArray());
+                configFile.Save(ConfigurationSaveMode.Modified);
             }
         }
 
@@ -149,7 +155,7 @@ namespace Caffeinated.Helpers
                     case "Mug":
                         _icon = TrayIcon.Mug;
                         break;
-                    case "Eye-ZZZ":
+                    case "EyeWithZzz":
                         _icon = TrayIcon.EyeWithZzz;
                         break;
                     default:
@@ -181,6 +187,8 @@ namespace Caffeinated.Helpers
                 AddUpdateAppSettings(nameof(Durations), string.Join(',', _durations.ToArray()));
                 Console.WriteLine($"Error reading Durations app settings");
             }
+
+            configFile.Save(ConfigurationSaveMode.Modified);
         }
 
         void AddUpdateAppSettings(string key, string value)
