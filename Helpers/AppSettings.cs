@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Caffeinated;
 
 namespace Caffeinated.Helpers
 {
     public class AppSettings
     {
-        NameValueCollection appSettings = ConfigurationManager.AppSettings;
+        Configuration configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        KeyValueConfigurationCollection appSettings;
 
         private bool _activateOnLaunch;
 
@@ -21,7 +19,7 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _activateOnLaunch = value;
-                appSettings[nameof(ActivateOnLaunch)] = _activateOnLaunch.ToString();
+                appSettings[nameof(ActivateOnLaunch)].Value = _activateOnLaunch.ToString();
             }
         }
 
@@ -33,7 +31,7 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _automaticallyLaunchWithWindows = value;
-                appSettings[nameof(AutomaticallyLaunchWithWindows)] = _automaticallyLaunchWithWindows.ToString();
+                appSettings[nameof(AutomaticallyLaunchWithWindows)].Value = _automaticallyLaunchWithWindows.ToString();
             }
         }
 
@@ -46,7 +44,7 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _showMessageOnLaunch = value;
-                appSettings[nameof(ShowMessageOnLaunch)] = _showMessageOnLaunch.ToString();
+                appSettings[nameof(ShowMessageOnLaunch)].Value = _showMessageOnLaunch.ToString();
             }
         }
 
@@ -59,7 +57,7 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _defaultDuration = value; 
-                appSettings[nameof(DefaultDuration)] = _defaultDuration.ToString();
+                appSettings[nameof(DefaultDuration)].Value = _defaultDuration.ToString();
             }
         }
 
@@ -72,7 +70,7 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _icon = value; 
-                appSettings[nameof(Icon)] = _icon.ToString();
+                appSettings[nameof(Icon)].Value = _icon.ToString();
             }
         }
 
@@ -85,60 +83,66 @@ namespace Caffeinated.Helpers
             set 
             { 
                 _durations = value;
-                appSettings[nameof(Durations)] = string.Join(',',Durations.ToArray());
+                appSettings[nameof(Durations)].Value = string.Join(',',Durations.ToArray());
             }
         }
 
 
         public AppSettings()
         {
+            appSettings = configFile.AppSettings.Settings;
+
             try 
             {
-                string ActivateOnLaunchresult = appSettings[nameof(ActivateOnLaunch)];
+                string ActivateOnLaunchresult = appSettings[nameof(ActivateOnLaunch)].Value;
                 _activateOnLaunch = bool.Parse(ActivateOnLaunchresult);
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _activateOnLaunch = false;
+                AddUpdateAppSettings(nameof(ActivateOnLaunch), _activateOnLaunch.ToString());
                 Console.WriteLine($"Error reading _activateOnLaunch app settings");
             }
 
             try
             {
-                string AutomaticallyLaunchWithWindowsresult = appSettings[nameof(AutomaticallyLaunchWithWindows)];
+                string AutomaticallyLaunchWithWindowsresult = appSettings[nameof(AutomaticallyLaunchWithWindows)].Value;
                 _automaticallyLaunchWithWindows = bool.Parse(AutomaticallyLaunchWithWindowsresult);
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _automaticallyLaunchWithWindows = false;
+                AddUpdateAppSettings(nameof(AutomaticallyLaunchWithWindows), _automaticallyLaunchWithWindows.ToString());
                 Console.WriteLine("Error reading _automaticallyLaunchWithWindows app settings");
             }
 
             try
             {
-                string ShowMessageOnLaunchresult = appSettings[nameof(ShowMessageOnLaunch)];
+                string ShowMessageOnLaunchresult = appSettings[nameof(ShowMessageOnLaunch)].Value;
                 _showMessageOnLaunch = bool.Parse(ShowMessageOnLaunchresult);
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _showMessageOnLaunch = true;
+                AddUpdateAppSettings(nameof(ShowMessageOnLaunch), _showMessageOnLaunch.ToString());
                 Console.WriteLine($"Error reading _showMessageOnLaunch app settings");
             }
 
             try
             {
-                string DefaultDurationresult = appSettings[nameof(DefaultDuration)];
+                string DefaultDurationresult = appSettings[nameof(DefaultDuration)].Value;
                 _defaultDuration = int.Parse(DefaultDurationresult);
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _defaultDuration = 0;
+                AddUpdateAppSettings(nameof(DefaultDuration), _defaultDuration.ToString());
                 Console.WriteLine("Error reading _defaultDuration app settings");
             }
 
             try
             {
-                string Iconresult = appSettings[nameof(Icon)];
+                string Iconresult = appSettings[nameof(Icon)].Value;
 
                 switch (Iconresult)
                 {
@@ -153,15 +157,16 @@ namespace Caffeinated.Helpers
                         break;
                 }
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _icon = TrayIcon.Default;
+                AddUpdateAppSettings(nameof(Icon), _icon.ToString());
                 Console.WriteLine($"Error reading Icon app settings");
             }
 
             try
             {
-                string Durationsresult = appSettings[nameof(Durations)];
+                string Durationsresult = appSettings[nameof(Durations)].Value;
                 List<string> splitResult = Durationsresult.Split(',').ToList();
 
                 _durations = new List<int>();
@@ -170,10 +175,32 @@ namespace Caffeinated.Helpers
                     _durations.Add(int.Parse(item));
                 }
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception)
             {
                 _durations = new List<int> { 0, 15, 60, 120, 480 };
+                AddUpdateAppSettings(nameof(Durations), string.Join(',', _durations.ToArray()));
                 Console.WriteLine($"Error reading Durations app settings");
+            }
+        }
+
+        void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                if (appSettings[key] == null)
+                {
+                    appSettings.Add(key, value);
+                }
+                else
+                {
+                    appSettings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException)
+            {
+                Console.WriteLine("Error writing app settings");
             }
         }
     }

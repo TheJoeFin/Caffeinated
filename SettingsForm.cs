@@ -3,21 +3,30 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using Caffeinated.Helpers;
 using Caffeinated.Properties;
 using Windows.ApplicationModel;
 
 namespace Caffeinated {
     public partial class SettingsForm : BaseForm {
         BindingList<Duration> Durations;
+        AppSettings appSettings;
 
-        public SettingsForm() : base() {
+        public SettingsForm(AppSettings passedAppSettings) : base() {
             InitializeComponent();
-            var durations = from i in Settings.Default.RealDurations
+            appSettings = passedAppSettings;
+            var durations = from i in appSettings.Durations
                             select new Duration { Minutes = i };
             this.Durations = new BindingList<Duration>(durations.ToList());
             var defaultItem = this.Durations.Where(
-                d => d.Minutes == Settings.Default.DefaultDuration
+                d => d.Minutes == appSettings.DefaultDuration
             ).FirstOrDefault();
+
+            if (appSettings.ShowMessageOnLaunch)
+                SettingsAtLaunchChkBox.Checked = true;
+
+            if (appSettings.ActivateOnLaunch)
+                ActivateChkBox.Checked = true;
 
             DefaultDurationBox.DataSource = this.Durations;
             DefaultDurationBox.DisplayMember = "Description";
@@ -35,11 +44,11 @@ namespace Caffeinated {
         }
 
         private void setRadioButtons() {
-            switch (Settings.Default.Icon) {
-                case "Mug":
+            switch (appSettings.Icon) {
+                case TrayIcon.Mug:
                     mugRDBTN.Checked = true;
                     break;
-                case "Eye-ZZZ":
+                case TrayIcon.EyeWithZzz:
                     eyeZZZRDBTN.Checked = true;
                     break;
                 default:
@@ -72,8 +81,8 @@ namespace Caffeinated {
                     break;
                 case DialogResult.Yes:
                     Durations.Remove(durationToDelete);
-                    Settings.Default.RealDurations.Remove(durationToDelete.Minutes);
-                    Settings.Default.RealDurations = Settings.Default.RealDurations;
+                    appSettings.Durations.Remove(durationToDelete.Minutes);
+                    // appSettings.Durations = appSettings.Durations;
                     break;
                 case DialogResult.No:
                     break;
@@ -105,7 +114,7 @@ namespace Caffeinated {
         }
 
         private void okBtn_Click(object sender, EventArgs e) {
-            Settings.Default.Save();
+            //Settings.Default.Save();
             this.Close();
         }
 
@@ -116,7 +125,7 @@ namespace Caffeinated {
         private void DefaultDurationBox_SelectedIndexChanged(object sender,EventArgs e) {
             var item = DefaultDurationBox.SelectedItem as Duration;
             if (item != null) {
-                Settings.Default.DefaultDuration = item.Minutes;
+                appSettings.DefaultDuration = item.Minutes;
             }
         }
 
@@ -152,7 +161,7 @@ namespace Caffeinated {
                 return;
             }
 
-            if (Settings.Default.RealDurations.Contains(newDuration)) {
+            if (appSettings.Durations.Contains(newDuration)) {
                 CustomDurationTXBX.Text = "";
                 MessageBox.Show(
                     $"{newDuration} is already a duration.",
@@ -172,22 +181,29 @@ namespace Caffeinated {
             foreach (var item in sortedDurations) {
                 Durations.Add(item);
             }
-            Settings.Default.RealDurations.Add(newDuration); 
-            Settings.Default.Durations += $",{newDuration}";
+            appSettings.Durations.Add(newDuration); 
 
             CustomDurationTXBX.Text = "";            
         }
 
         private void defaultRDBTN_Click(object sender, EventArgs e) {
-            Settings.Default.Icon = "Default";
+            appSettings.Icon = TrayIcon.Default;
         }
 
         private void eyeZZZRDBTN_Click(object sender, EventArgs e) {
-            Settings.Default.Icon = "Eye-ZZZ";
+            appSettings.Icon = TrayIcon.EyeWithZzz;
         }
 
         private void mugRDBTN_Click(object sender, EventArgs e) {
-            Settings.Default.Icon = "Mug";
+            appSettings.Icon = TrayIcon.Mug;
+        }
+
+        private void ActivateChkBox_CheckedChanged(object sender, EventArgs e) {
+            appSettings.ActivateOnLaunch = ActivateChkBox.Checked;
+        }
+
+        private void SettingsAtLaunchChkBox_CheckedChanged(object sender, EventArgs e) {
+            appSettings.ShowMessageOnLaunch = SettingsAtLaunchChkBox.Checked;
         }
     }
 }
