@@ -23,7 +23,6 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutForm));
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.VersionTxtBlk = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.dmndLbl = new System.Windows.Forms.LinkLabel();
@@ -31,20 +30,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.OriginallyByLink = new System.Windows.Forms.LinkLabel();
             this.ForkedByTheJoeFinLink = new System.Windows.Forms.LinkLabel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-            this.pictureBox1.Location = new System.Drawing.Point(18, 22);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(96, 96);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 11;
-            this.pictureBox1.TabStop = false;
             // 
             // VersionTxtBlk
             // 
@@ -134,11 +122,22 @@
             this.ForkedByTheJoeFinLink.UseCompatibleTextRendering = true;
             this.ForkedByTheJoeFinLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.ForkedByTheJoeFinLink_LinkClicked);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::Caffeinated.Properties.Resources.Caffeine_Black_96;
+            this.pictureBox1.Location = new System.Drawing.Point(17, 20);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(175, 175);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 23;
+            this.pictureBox1.TabStop = false;
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(378, 481);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.ForkedByTheJoeFinLink);
             this.Controls.Add(this.OriginallyByLink);
             this.Controls.Add(this.label1);
@@ -146,7 +145,6 @@
             this.Controls.Add(this.dmndLbl);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.VersionTxtBlk);
-            this.Controls.Add(this.pictureBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -165,8 +163,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label VersionTxtBlk;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.LinkLabel dmndLbl;
@@ -174,5 +170,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.LinkLabel OriginallyByLink;
         private System.Windows.Forms.LinkLabel ForkedByTheJoeFinLink;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
