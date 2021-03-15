@@ -81,7 +81,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label2.Location = new System.Drawing.Point(181, 168);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
@@ -192,9 +192,6 @@
             // SettingsAtLaunchChkBox
             // 
             this.SettingsAtLaunchChkBox.AutoSize = true;
-            this.SettingsAtLaunchChkBox.Checked = global::Caffeinated.Properties.Settings.Default.ShowSettingsAtLaunch;
-            this.SettingsAtLaunchChkBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.SettingsAtLaunchChkBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::Caffeinated.Properties.Settings.Default, "ShowSettingsAtLaunch", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.SettingsAtLaunchChkBox.Location = new System.Drawing.Point(4, 83);
             this.SettingsAtLaunchChkBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.SettingsAtLaunchChkBox.Name = "SettingsAtLaunchChkBox";
@@ -202,12 +199,11 @@
             this.SettingsAtLaunchChkBox.TabIndex = 5;
             this.SettingsAtLaunchChkBox.Text = "Show this message upon launch";
             this.SettingsAtLaunchChkBox.UseVisualStyleBackColor = true;
+            this.SettingsAtLaunchChkBox.CheckedChanged += new System.EventHandler(this.SettingsAtLaunchChkBox_CheckedChanged);
             // 
             // ActivateChkBox
             // 
             this.ActivateChkBox.AutoSize = true;
-            this.ActivateChkBox.Checked = global::Caffeinated.Properties.Settings.Default.ActivateAtLaunch;
-            this.ActivateChkBox.DataBindings.Add(new System.Windows.Forms.Binding("Checked", global::Caffeinated.Properties.Settings.Default, "ActivateAtLaunch", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.ActivateChkBox.Location = new System.Drawing.Point(4, 44);
             this.ActivateChkBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.ActivateChkBox.Name = "ActivateChkBox";
@@ -215,6 +211,7 @@
             this.ActivateChkBox.TabIndex = 4;
             this.ActivateChkBox.Text = "Activate upon launch";
             this.ActivateChkBox.UseVisualStyleBackColor = true;
+            this.ActivateChkBox.CheckedChanged += new System.EventHandler(this.ActivateChkBox_CheckedChanged);
             // 
             // StartupChkBox
             // 

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Caffeinated.Helpers;
 using Caffeinated.Properties;
 using Microsoft.Win32;
 
@@ -83,6 +84,7 @@ namespace Caffeinated {
         private SettingsForm settingsForm = null;
         private AboutForm aboutForm = null;
         private bool isLightTheme = false;
+        AppSettings appSettings;
 
         [STAThread]
         static void Main() {
@@ -108,6 +110,9 @@ namespace Caffeinated {
             this.components = new Container();
             this.timer = new Timer(components);
             timer.Tick += new EventHandler(timer_Tick);
+
+            appSettings = new AppSettings();
+
             SetIsLightTheme();
             
             setIcons();
@@ -121,12 +126,12 @@ namespace Caffeinated {
             // Handle the DoubleClick event to activate the form.
             notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
 
-            if (Settings.Default.ActivateAtLaunch)
+            if (appSettings.ActivateOnLaunch)
                 activate(Settings.Default.DefaultDuration);
             else 
                 deactivate();
 
-            if (Settings.Default.ShowSettingsAtLaunch) 
+            if (appSettings.ShowMessageOnLaunch) 
                 showSettings();
         }
 
@@ -154,8 +159,8 @@ namespace Caffeinated {
         }
 
         private void setIcons() {
-            switch (Settings.Default.Icon) {
-                case "Mug":
+            switch (appSettings.Icon) {
+                case TrayIcon.Mug:
                     if (isLightTheme){
                         this.offIcon = new Icon(
                             Properties.Resources.Mug_Sleep_Black_icon,
@@ -177,7 +182,7 @@ namespace Caffeinated {
                     }
 
                     break;
-                case "Eye-ZZZ":
+                case TrayIcon.EyeWithZzz:
                     if (isLightTheme){
                         this.offIcon = new Icon(
                             Properties.Resources.Eye_zzz_Sleep_Black_icon,
@@ -229,11 +234,11 @@ namespace Caffeinated {
             exitItem.Click += new EventHandler(this.exitItem_Click);
 
             // If the user deleted all time settings, add 0 back in.
-            if (Settings.Default.Durations.Length == 0)
-                Settings.Default.Durations = "0";
+            if (appSettings.Durations.Count == 0)
+                appSettings.DefaultDuration = 0;
 
             // we want the lower durations to be closer to the mouse. So, 
-            var times = Settings.Default.RealDurations;
+            var times = appSettings.Durations;
             IEnumerable<int> sortedTimes = Enumerable.Empty<int>();
             if ((new Taskbar()).Position == TaskbarPosition.Top) {
                 sortedTimes = times.OrderBy(i => i);
@@ -247,6 +252,10 @@ namespace Caffeinated {
 
             var aboutItem = new ToolStripMenuItem("&About...");
             aboutItem.Click += new EventHandler(aboutItem_Click);
+
+            var settingsMenuItem = new ContextMenuStrip(){
+                Text = "Settings",
+            };
 
             contextMenu.Items.AddRange(
                 new ToolStripMenuItem[] {
@@ -280,7 +289,7 @@ namespace Caffeinated {
         }
 
         void showSettings() {
-            settingsForm = new SettingsForm();
+            settingsForm = new SettingsForm(appSettings);
             settingsForm.FormClosing += SettingsForm_FormClosing;
             settingsForm.Show();
         }
@@ -310,7 +319,7 @@ namespace Caffeinated {
             if (this.isActive())
                 this.deactivate();
             else
-                this.activate(Settings.Default.DefaultDuration);
+                this.activate(appSettings.DefaultDuration);
         }
 
         void ShowError() {
