@@ -80,7 +80,8 @@ namespace Caffeinated.Helpers {
             appSettings = configFile.AppSettings.Settings;
 
             try {
-                string ActivateOnLaunchresult = appSettings[nameof(ActivateOnLaunch)].Value;
+                KeyValueConfigurationElement ActivateOnLaunchSetting = appSettings[nameof(ActivateOnLaunch)];
+                string ActivateOnLaunchresult = ActivateOnLaunchSetting == null ? "false" : ActivateOnLaunchSetting.Value;
                 _activateOnLaunch = bool.Parse(ActivateOnLaunchresult);
             }
             catch (Exception) {
@@ -90,7 +91,8 @@ namespace Caffeinated.Helpers {
             }
 
             try {
-                string AutomaticallyLaunchWithWindowsresult = appSettings[nameof(AutomaticallyLaunchWithWindows)].Value;
+                KeyValueConfigurationElement AutomaticallyLaunchWithWindowsSetting = appSettings[nameof(AutomaticallyLaunchWithWindows)];
+                string AutomaticallyLaunchWithWindowsresult = AutomaticallyLaunchWithWindowsSetting == null ? "false" : AutomaticallyLaunchWithWindowsSetting.Value;
                 _automaticallyLaunchWithWindows = bool.Parse(AutomaticallyLaunchWithWindowsresult);
             }
             catch (Exception) {
@@ -100,7 +102,8 @@ namespace Caffeinated.Helpers {
             }
 
             try {
-                string ShowMessageOnLaunchresult = appSettings[nameof(ShowMessageOnLaunch)].Value;
+                KeyValueConfigurationElement ShowMessageOnLaunchSetting = appSettings[nameof(ShowMessageOnLaunch)];
+                string ShowMessageOnLaunchresult = ShowMessageOnLaunchSetting == null ? "true" : ShowMessageOnLaunchSetting.Value;
                 _showMessageOnLaunch = bool.Parse(ShowMessageOnLaunchresult);
             }
             catch (Exception) {
@@ -110,7 +113,8 @@ namespace Caffeinated.Helpers {
             }
 
             try {
-                string DefaultDurationresult = appSettings[nameof(DefaultDuration)].Value;
+                KeyValueConfigurationElement DefaultDurationSetting = appSettings[nameof(DefaultDuration)];
+                string DefaultDurationresult = DefaultDurationSetting == null ? "0" : DefaultDurationSetting.Value;
                 _defaultDuration = int.Parse(DefaultDurationresult);
             }
             catch (Exception) {
@@ -120,7 +124,8 @@ namespace Caffeinated.Helpers {
             }
 
             try {
-                string Iconresult = appSettings[nameof(Icon)].Value;
+                KeyValueConfigurationElement IconSetting = appSettings[nameof(Icon)];
+                string Iconresult = IconSetting == null ? "default" : IconSetting.Value;
                 switch (Iconresult) {
                     case "Mug":
                         _icon = TrayIcon.Mug;
@@ -140,7 +145,8 @@ namespace Caffeinated.Helpers {
             }
 
             try {
-                string Durationsresult = appSettings[nameof(Durations)].Value;
+                KeyValueConfigurationElement DurationsSetting = appSettings[nameof(Durations)];
+                string Durationsresult = DurationsSetting == null ? "0,15,60,120,480" : DurationsSetting.Value;
                 List<string> splitResult = Durationsresult.Split(',').ToList();
 
                 _durations = new ObservableCollection<int>();
