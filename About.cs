@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
 namespace Caffeinated {
     partial class AboutForm : BaseForm {
@@ -19,7 +20,7 @@ namespace Caffeinated {
 
         #region Assembly Attribute Accessors
 
-        public string AssemblyTitle {
+        public static string AssemblyTitle {
             get {
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
                 if (attributes.Length > 0) {
@@ -28,7 +29,12 @@ namespace Caffeinated {
                         return titleAttribute.Title;
                     }
                 }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+                string? systemString = Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+
+                if (systemString == null)
+                    return "";
+                else
+                    return systemString;
             }
         }
 

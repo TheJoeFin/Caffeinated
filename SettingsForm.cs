@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using Caffeinated.Helpers;
-using Caffeinated.Properties;
 using Windows.ApplicationModel;
 
 namespace Caffeinated {
@@ -33,9 +32,9 @@ namespace Caffeinated {
             DefaultDurationBox.ValueMember = "Minutes";
             DefaultDurationBox.SelectedItem = defaultItem;
 
-            ToolStripMenuItem deleteMI = new ToolStripMenuItem("Delete Duration");
+            ToolStripMenuItem deleteMI = new("Delete Duration");
             deleteMI.Click += DeleteMI_Click;
-            ContextMenuStrip durationCM = new ContextMenuStrip();
+            ContextMenuStrip durationCM = new();
             durationCM.Items.Add(deleteMI);
             DefaultDurationBox.ContextMenuStrip = durationCM;
 
@@ -57,8 +56,9 @@ namespace Caffeinated {
             }
         }
 
-        private void DeleteMI_Click(object sender, EventArgs e) {
-            Duration durationToDelete = DefaultDurationBox.SelectedItem as Duration;
+        private void DeleteMI_Click(object? sender, EventArgs e) {
+            if (DefaultDurationBox.SelectedItem is not Duration durationToDelete)
+                return;
 
             DialogResult result = MessageBox.Show(
                     $"Delete {durationToDelete.Description}?",
@@ -122,8 +122,7 @@ namespace Caffeinated {
         }
 
         private void DefaultDurationBox_SelectedIndexChanged(object sender,EventArgs e) {
-            var item = DefaultDurationBox.SelectedItem as Duration;
-            if (item != null) {
+            if (DefaultDurationBox.SelectedItem is Duration item) {
                 appSettings.DefaultDuration = item.Minutes;
             }
         }
@@ -131,8 +130,7 @@ namespace Caffeinated {
         private async void StartupChkBox_CheckedChanged(object sender, EventArgs e) {
             StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
 
-            switch (StartupChkBox.Checked)
-            {
+            switch (StartupChkBox.Checked) {
                 case true:
                     StartupTaskState newState = await startupTask.RequestEnableAsync();
                     Debug.WriteLine("Request to enable startup, result = {0}", newState);
@@ -147,8 +145,10 @@ namespace Caffeinated {
         }
 
         private void addCustomDurationBTN_Click(object sender, EventArgs e) {
-            int newDuration = 0;
-            int.TryParse(CustomDurationTXBX.Text, out newDuration);
+            bool didParse = int.TryParse(CustomDurationTXBX.Text, out int newDuration);
+
+            if (didParse == false)
+                return;
 
             if ( newDuration < 0) {
                 CustomDurationTXBX.Text = "";
@@ -170,7 +170,7 @@ namespace Caffeinated {
                 return;
             }
 
-            Duration newCustomDuration = new Duration {
+            Duration newCustomDuration = new() {
                 Minutes = newDuration
             };
 
@@ -180,9 +180,9 @@ namespace Caffeinated {
             foreach (var item in sortedDurations) {
                 Durations.Add(item);
             }
-            appSettings.Durations.Add(newDuration); 
+            appSettings.Durations.Add(newDuration);
 
-            CustomDurationTXBX.Text = "";            
+            CustomDurationTXBX.Text = "";
         }
 
         private void defaultRDBTN_Click(object sender, EventArgs e) {
