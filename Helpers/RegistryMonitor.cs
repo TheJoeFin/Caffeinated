@@ -47,7 +47,7 @@ namespace RegistryUtils
 	{
 		#region P/Invoke
 
-		[DllImport("advapi32.dll", SetLastError = true)]
+		[DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern int RegOpenKeyEx(IntPtr hKey, string subKey, uint options, int samDesired,
 		                                       out IntPtr phkResult);
 
@@ -63,13 +63,13 @@ namespace RegistryUtils
 		private const int KEY_NOTIFY = 0x0010;
 		private const int STANDARD_RIGHTS_READ = 0x00020000;
 
-		private static readonly IntPtr HKEY_CLASSES_ROOT = new IntPtr(unchecked((int) 0x80000000));
-		private static readonly IntPtr HKEY_CURRENT_USER = new IntPtr(unchecked((int) 0x80000001));
-		private static readonly IntPtr HKEY_LOCAL_MACHINE = new IntPtr(unchecked((int) 0x80000002));
-		private static readonly IntPtr HKEY_USERS = new IntPtr(unchecked((int) 0x80000003));
-		private static readonly IntPtr HKEY_PERFORMANCE_DATA = new IntPtr(unchecked((int) 0x80000004));
-		private static readonly IntPtr HKEY_CURRENT_CONFIG = new IntPtr(unchecked((int) 0x80000005));
-		private static readonly IntPtr HKEY_DYN_DATA = new IntPtr(unchecked((int) 0x80000006));
+		private static readonly IntPtr HKEY_CLASSES_ROOT = new(unchecked((int) 0x80000000));
+		private static readonly IntPtr HKEY_CURRENT_USER = new(unchecked((int)0x80000001));
+		private static readonly IntPtr HKEY_LOCAL_MACHINE = new(unchecked((int)0x80000002));
+		private static readonly IntPtr HKEY_USERS = new(unchecked((int)0x80000003));
+		private static readonly IntPtr HKEY_PERFORMANCE_DATA = new(unchecked((int)0x80000004));
+		private static readonly IntPtr HKEY_CURRENT_CONFIG = new(unchecked((int)0x80000005));
+		private static readonly IntPtr HKEY_DYN_DATA = new(unchecked((int)0x80000006));
 
 		#endregion
 
@@ -78,7 +78,7 @@ namespace RegistryUtils
 		/// <summary>
 		/// Occurs when the specified registry key has changed.
 		/// </summary>
-		public event EventHandler RegChanged;
+		public event EventHandler? RegChanged;
 		
 		/// <summary>
 		/// Raises the <see cref="RegChanged"/> event.
@@ -94,15 +94,13 @@ namespace RegistryUtils
 		/// </remarks>
 		protected virtual void OnRegChanged()
 		{
-			EventHandler handler = RegChanged;
-			if (handler != null)
-				handler(this, null);
-		}
+            RegChanged?.Invoke(this, null);
+        }
 
 		/// <summary>
 		/// Occurs when the access to the registry fails.
 		/// </summary>
-		public event ErrorEventHandler Error;
+		public event ErrorEventHandler? Error;
 		
 		/// <summary>
 		/// Raises the <see cref="Error"/> event.
@@ -119,21 +117,19 @@ namespace RegistryUtils
 		/// </remarks>
 		protected virtual void OnError(Exception e)
 		{
-			ErrorEventHandler handler = Error;
-			if (handler != null)
-				handler(this, new ErrorEventArgs(e));
-		}
+            Error?.Invoke(this, new ErrorEventArgs(e));
+        }
 
 		#endregion
 
 		#region Private member variables
 
-		private IntPtr _registryHive;
-		private string _registrySubName;
-		private object _threadLock = new object();
-		private Thread _thread;
+		private IntPtr? _registryHive;
+		private string? _registrySubName;
+		private object _threadLock = new();
+		private Thread? _thread;
 		private bool _disposed = false;
-		private ManualResetEvent _eventTerminate = new ManualResetEvent(false);
+		private ManualResetEvent _eventTerminate = new(false);
 
 		private RegChangeNotifyFilter _regFilter = RegChangeNotifyFilter.Key | RegChangeNotifyFilter.Attribute |
 		                                           RegChangeNotifyFilter.Value | RegChangeNotifyFilter.Security;
@@ -156,7 +152,7 @@ namespace RegistryUtils
 		public RegistryMonitor(string name)
 		{
 			if (name == null || name.Length == 0)
-				throw new ArgumentNullException("name");
+				throw new ArgumentNullException(nameof(name));
 
 			InitRegistryKey(name);
 		}
@@ -203,40 +199,17 @@ namespace RegistryUtils
 
 		private void InitRegistryKey(RegistryHive hive, string name)
 		{
-			switch (hive)
-			{
-				case RegistryHive.ClassesRoot:
-					_registryHive = HKEY_CLASSES_ROOT;
-					break;
-
-				case RegistryHive.CurrentConfig:
-					_registryHive = HKEY_CURRENT_CONFIG;
-					break;
-
-				case RegistryHive.CurrentUser:
-					_registryHive = HKEY_CURRENT_USER;
-					break;
-
-				//case RegistryHive.DynData:
-				//	_registryHive = HKEY_DYN_DATA;
-				//	break;
-
-				case RegistryHive.LocalMachine:
-					_registryHive = HKEY_LOCAL_MACHINE;
-					break;
-
-				case RegistryHive.PerformanceData:
-					_registryHive = HKEY_PERFORMANCE_DATA;
-					break;
-
-				case RegistryHive.Users:
-					_registryHive = HKEY_USERS;
-					break;
-
-				default:
-					throw new InvalidEnumArgumentException("hive", (int)hive, typeof (RegistryHive));
-			}
-			_registrySubName = name;
+            _registryHive = hive switch
+            {
+                RegistryHive.ClassesRoot => HKEY_CLASSES_ROOT,
+                RegistryHive.CurrentConfig => HKEY_CURRENT_CONFIG,
+                RegistryHive.CurrentUser => HKEY_CURRENT_USER,
+                RegistryHive.LocalMachine => HKEY_LOCAL_MACHINE,
+                RegistryHive.PerformanceData => HKEY_PERFORMANCE_DATA,
+                RegistryHive.Users => HKEY_USERS,
+                _ => throw new InvalidEnumArgumentException("hive", (int)hive, typeof(RegistryHive)),
+            };
+            _registrySubName = name;
 		}
 
 		private void InitRegistryKey(string name)
@@ -270,10 +243,10 @@ namespace RegistryUtils
 
 				default:
 					_registryHive = IntPtr.Zero;
-					throw new ArgumentException("The registry hive '" + nameParts[0] + "' is not supported", "value");
+					throw new ArgumentException($"The registry hive '{nameParts[0]}' is not supported", "value");
 			}
 
-			_registrySubName = String.Join("\\", nameParts, 1, nameParts.Length - 1);
+			_registrySubName = string.Join("\\", nameParts, 1, nameParts.Length - 1);
 		}
 		
 		#endregion
@@ -300,9 +273,11 @@ namespace RegistryUtils
 				if (!IsMonitoring)
 				{
 					_eventTerminate.Reset();
-					_thread = new Thread(new ThreadStart(MonitorThread));
-					_thread.IsBackground = true;
-					_thread.Start();
+                    _thread = new Thread(new ThreadStart(MonitorThread))
+                    {
+                        IsBackground = true
+                    };
+                    _thread.Start();
 				}
 			}
 		}
@@ -317,8 +292,7 @@ namespace RegistryUtils
 			
 			lock (_threadLock)
 			{
-				Thread thread = _thread;
-				if (thread != null)
+				if (_thread is Thread thread)
 				{
 					_eventTerminate.Set();
 					thread.Join();
@@ -341,15 +315,17 @@ namespace RegistryUtils
 
 		private void ThreadLoop()
 		{
-			IntPtr registryKey;
-			int result = RegOpenKeyEx(_registryHive, _registrySubName, 0, STANDARD_RIGHTS_READ | KEY_QUERY_VALUE | KEY_NOTIFY,
-			                          out registryKey);
-			if (result != 0)
+            int result = RegOpenKeyEx(_registryHive.Value,
+                                      _registrySubName,
+                                      0,
+                                      STANDARD_RIGHTS_READ | KEY_QUERY_VALUE | KEY_NOTIFY,
+                                      out IntPtr registryKey);
+            if (result != 0)
 				throw new Win32Exception(result);
 
 			try
 			{
-				AutoResetEvent _eventNotify = new AutoResetEvent(false);
+				AutoResetEvent _eventNotify = new(false);
 				WaitHandle[] waitHandles = new WaitHandle[] {_eventNotify, _eventTerminate};
 				while (!_eventTerminate.WaitOne(0, true))
 				{

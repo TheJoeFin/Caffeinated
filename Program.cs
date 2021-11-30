@@ -89,6 +89,7 @@ namespace Caffeinated {
         private AboutForm? aboutForm = null;
         private bool isLightTheme = false;
         private AppSettings? appSettings;
+        private const string themeKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
 
         [STAThread]
         private static void Main() {
@@ -120,8 +121,7 @@ namespace Caffeinated {
 
             SetIsLightTheme();
 
-            string keyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-            if (Registry.CurrentUser.OpenSubKey(keyPath) is RegistryKey key) {
+            if (Registry.CurrentUser.OpenSubKey(themeKeyPath) is RegistryKey key) {
                 RegistryMonitor monitor = new(key);
                 monitor.RegChanged += new EventHandler(SetIsLightTheme);
                 monitor.Start();
@@ -150,7 +150,7 @@ namespace Caffeinated {
 
         private void SetIsLightTheme(object? sender = null, EventArgs? e = null) {
             try {
-                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
+                using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(themeKeyPath)) {
                     if (key != null) {
                         Object? o = key.GetValue("SystemUsesLightTheme");
                         if (o != null) {
