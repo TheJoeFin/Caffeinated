@@ -1,6 +1,7 @@
 ﻿using Caffeinated.Helpers;
 using Caffeinated.Properties;
 using Microsoft.Win32;
+using RegistryUtils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -119,9 +120,14 @@ namespace Caffeinated {
 
             SetIsLightTheme();
 
-            setIcons();
-            notifyIcon = new NotifyIcon(components);
-            setContextMenu();
+            string keyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+            if (Registry.CurrentUser.OpenSubKey(keyPath) is RegistryKey key) {
+                RegistryMonitor monitor = new(key);
+                monitor.RegChanged += new EventHandler(SetIsLightTheme);
+                monitor.Start();
+            }
+
+            notifyIcon = new(components);
 
             // tooltip
             notifyIcon.Text = "Caffeinated";
@@ -142,7 +148,7 @@ namespace Caffeinated {
             }
         }
 
-        private void SetIsLightTheme() {
+        private void SetIsLightTheme(object? sender = null, EventArgs? e = null) {
             try {
                 using (RegistryKey? key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")) {
                     if (key != null) {
@@ -160,6 +166,21 @@ namespace Caffeinated {
             }
             catch (Exception) {
                 isLightTheme = false;
+            }
+
+            setContextMenu();
+            setIcons();
+
+            if (notifyIcon != null)
+            {
+                if (isActivated)
+                {
+                    notifyIcon.Icon = onIcon;
+                }
+                else
+                {
+                    notifyIcon.Icon = offIcon;
+                }
             }
         }
 
