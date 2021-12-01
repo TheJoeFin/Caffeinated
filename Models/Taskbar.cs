@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
+namespace Caffeinated;
+
 // taskbar api stuff from here:
 // http://winsharp93.wordpress.com/2009/06/29/find-out-size-and-position-of-the-taskbar/
 
@@ -45,9 +47,9 @@ public sealed class Taskbar {
     }
 
     public Taskbar() {
-        IntPtr taskbarHandle = User32.FindWindow(Taskbar.ClassName, null);
+        IntPtr taskbarHandle = User32.FindWindow(ClassName, string.Empty);
 
-        APPBARDATA data = new APPBARDATA();
+        APPBARDATA data = new();
         data.cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA));
         data.hWnd = taskbarHandle;
         IntPtr result = Shell32.SHAppBarMessage(ABM.GetTaskbarPos, ref data);
@@ -104,7 +106,7 @@ public static class Shell32 {
 }
 
 public static class User32 {
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern IntPtr FindWindow(
         string lpClassName,
         string lpWindowName
