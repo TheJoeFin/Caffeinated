@@ -11,6 +11,7 @@
     <StartupObject>Caffeinated.AppContext</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Nullable>Enable</Nullable>
+    <Platforms>AnyCPU;x86;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
