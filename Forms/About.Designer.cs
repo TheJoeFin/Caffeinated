@@ -45,7 +45,7 @@
             this.VersionTxtBlk.Name = "VersionTxtBlk";
             this.VersionTxtBlk.Size = new System.Drawing.Size(113, 25);
             this.VersionTxtBlk.TabIndex = 13;
-            this.VersionTxtBlk.Text = "Version 1.6.1";
+            this.VersionTxtBlk.Text = "Version 1.6.2";
             // 
             // label3
             // 
