@@ -31,6 +31,7 @@
             this.OriginallyByLink = new System.Windows.Forms.LinkLabel();
             this.ForkedByTheJoeFinLink = new System.Windows.Forms.LinkLabel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.RateLabel = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -42,9 +43,9 @@
             this.VersionTxtBlk.Location = new System.Drawing.Point(17, 254);
             this.VersionTxtBlk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.VersionTxtBlk.Name = "VersionTxtBlk";
-            this.VersionTxtBlk.Size = new System.Drawing.Size(99, 25);
+            this.VersionTxtBlk.Size = new System.Drawing.Size(113, 25);
             this.VersionTxtBlk.TabIndex = 13;
-            this.VersionTxtBlk.Text = "Version 1.6";
+            this.VersionTxtBlk.Text = "Version 1.6.1";
             // 
             // label3
             // 
@@ -73,15 +74,13 @@
             // caffeineLbl
             // 
             this.caffeineLbl.AutoSize = true;
-            this.caffeineLbl.LinkArea = new System.Windows.Forms.LinkArea(12, 17);
+            this.caffeineLbl.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
             this.caffeineLbl.Location = new System.Drawing.Point(17, 365);
             this.caffeineLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.caffeineLbl.Name = "caffeineLbl";
-            this.caffeineLbl.Size = new System.Drawing.Size(246, 30);
+            this.caffeineLbl.Size = new System.Drawing.Size(247, 25);
             this.caffeineLbl.TabIndex = 18;
-            this.caffeineLbl.TabStop = true;
             this.caffeineLbl.Text = "Inspired by Caffeine for OS X.";
-            this.caffeineLbl.UseCompatibleTextRendering = true;
             this.caffeineLbl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLbl_LinkClicked);
             // 
             // label1
@@ -132,11 +131,23 @@
             this.pictureBox1.TabIndex = 23;
             this.pictureBox1.TabStop = false;
             // 
+            // RateLabel
+            // 
+            this.RateLabel.AutoSize = true;
+            this.RateLabel.Location = new System.Drawing.Point(34, 494);
+            this.RateLabel.Name = "RateLabel";
+            this.RateLabel.Size = new System.Drawing.Size(316, 25);
+            this.RateLabel.TabIndex = 24;
+            this.RateLabel.TabStop = true;
+            this.RateLabel.Text = "Rate Windows Caffeinated in the Store";
+            this.RateLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.RateLabel_LinkClicked);
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(378, 481);
+            this.ClientSize = new System.Drawing.Size(378, 559);
+            this.Controls.Add(this.RateLabel);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.ForkedByTheJoeFinLink);
             this.Controls.Add(this.OriginallyByLink);
@@ -171,5 +182,6 @@
         private System.Windows.Forms.LinkLabel OriginallyByLink;
         private System.Windows.Forms.LinkLabel ForkedByTheJoeFinLink;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.LinkLabel RateLabel;
     }
 }

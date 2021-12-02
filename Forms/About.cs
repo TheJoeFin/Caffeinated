@@ -1,22 +1,14 @@
 ﻿using System.Reflection;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.IO;
+using Windows.System;
+using System;
 
 namespace Caffeinated;
 
 partial class AboutForm : BaseForm {
     public AboutForm() : base() {
         InitializeComponent();
-        caffeineLbl.Links[0].LinkData = 
-            "http://lightheadsw.com/caffeine/";
-        dmndLbl.Links[0].LinkData = 
-            "http://desmondbrand.com/caffeinated";
-        OriginallyByLink.Links[0].LinkData =
-            "http://desmondbrand.com/caffeinated";
-        ForkedByTheJoeFinLink.Links[0].LinkData =
-            "https://github.com/TheJoeFin/Caffeinated";
-        // VersionTxtBlk.Text = $"Version {ProductVersion}";
     }
 
     #region Assembly Attribute Accessors
@@ -86,18 +78,19 @@ partial class AboutForm : BaseForm {
     }
     #endregion
 
-    private void linkLbl_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e) {
-        if (e.Link.LinkData is string target)
-            Process.Start(target);
+    private async void linkLbl_LinkClicked( object sender, LinkLabelLinkClickedEventArgs e) {
+        _ = await Launcher.LaunchUriAsync(new Uri(string.Format("http://lightheadsw.com/caffeine/")));
     }
 
-    private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-        if (e.Link.LinkData is string target)
-            Process.Start(target);
+    private async void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+        _ = await Launcher.LaunchUriAsync(new Uri(string.Format("http://desmondbrand.com/caffeinated")));
     }
 
-    private void ForkedByTheJoeFinLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-        if (e.Link.LinkData is string target)
-            Process.Start(target);
+    private async void ForkedByTheJoeFinLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+        _ = await Launcher.LaunchUriAsync(new Uri(string.Format("https://github.com/TheJoeFin/Caffeinated")));
+    }
+
+    private async void RateLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+        _ = await Launcher.LaunchUriAsync(new Uri(string.Format("ms-windows-store:REVIEW?PFN={0}", "40087JoeFinApps.WindowsCaffeinated_kdbpvth5scec4")));
     }
 }
