@@ -62,11 +62,11 @@ public class AppContext : ApplicationContext {
             monitor.Start();
         }
 
-        notifyIcon = new(components);
-
-        // tooltip
-        notifyIcon.Text = "Caffeinated";
-        notifyIcon.Visible = true;
+        notifyIcon = new(components) {
+            // tooltip
+            Text = "Caffeinated",
+            Visible = true
+        };
 
         // Handle the DoubleClick event to activate the form.
         notifyIcon.MouseClick += new MouseEventHandler(notifyIcon1_Click);
@@ -88,18 +88,20 @@ public class AppContext : ApplicationContext {
 
     private void SetIsLightTheme(object? sender = null, EventArgs? e = null) {
         try {
-            using (RegistryKey? key = Registry.CurrentUser.OpenSubKey(themeKeyPath)) {
-                if (key != null) {
-                    Object? o = key.GetValue("SystemUsesLightTheme");
-                    if (o != null) {
-                        if (o.ToString() == "1") {
-                            isLightTheme = true;
-                        }
-                        else {
-                            isLightTheme = false;
-                        }
-                    }
-                }
+            using RegistryKey? key = Registry.CurrentUser.OpenSubKey(themeKeyPath);
+            if (key is null) {
+                return;
+            }
+            Object? o = key.GetValue("SystemUsesLightTheme");
+            if (o is null) {
+                return;
+            }
+
+            if (o.ToString() == "1") {
+                isLightTheme = true;
+            }
+            else {
+                isLightTheme = false;
             }
         }
         catch (Exception) {
@@ -109,14 +111,11 @@ public class AppContext : ApplicationContext {
         setIcons();
         setContextMenu();
 
-        if (notifyIcon != null)
-        {
-            if (isActivated)
-            {
+        if (notifyIcon != null) {
+            if (isActivated) {
                 notifyIcon.Icon = onIcon;
             }
-            else
-            {
+            else {
                 notifyIcon.Icon = offIcon;
             }
         }
@@ -252,8 +251,10 @@ public class AppContext : ApplicationContext {
         contextMenu.Items.Add(new ToolStripSeparator());
 
         foreach (int time in sortedTimes) {
-            ToolStripMenuItem? item = new(Duration.ToDescription(time));
-            item.Tag = time;
+            ToolStripMenuItem? item = new(Duration.ToDescription(time))
+            {
+                Tag = time
+            };
             item.Click += new(item_Click);
             contextMenu.Items.Add(item);
         }
@@ -326,7 +327,7 @@ public class AppContext : ApplicationContext {
         }
     }
 
-    private void ShowError() {
+    private static void ShowError() {
         MessageBox.Show(
             "Call to SetThreadExecutionState failed.",
             "Caffeinated",
@@ -364,9 +365,7 @@ public class AppContext : ApplicationContext {
     }
 
     private void deactivate() {
-        if (timer != null) {
-            timer.Stop();
-        }
+        timer?.Stop();
 
         uint result = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
         if (result == 0) {
@@ -382,9 +381,7 @@ public class AppContext : ApplicationContext {
 
     private void exitItem_Click(object? Sender, EventArgs e) {
         deactivate();
-        if (notifyIcon != null) {
-            notifyIcon.Dispose();
-        }
+        notifyIcon?.Dispose();
 
         ExitThread();
     }
