@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework> <!-- -windows10.0.17763.0 -->
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework> <!-- -windows10.0.17763.0 -->
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWinUI>true</UseWinUI>
@@ -11,10 +11,15 @@
     <StartupObject>Caffeinated.AppContext</StartupObject>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Nullable>Enable</Nullable>
-    <Platforms>AnyCPU;x86;x64</Platforms>
+    <Platforms>x86;x64</Platforms>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <PublishTrimmed>true</PublishTrimmed>
+    <CustomResourceTypesSupport>true</CustomResourceTypesSupport>
+    <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -39,6 +44,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="8.0.0" />
   </ItemGroup>
+
+    <ItemGroup>
+        <TrimmableAssembly Include="System.Windows.Forms" />
+        <TrimmableAssembly Include="System.Windows.Forms.Primitives" />
+    </ItemGroup>
+
+    <Target Name="ConfigureTrimming" BeforeTargets="PrepareForILLink">
+        <ItemGroup>
+            <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Windows.Forms'">
+                <IsTrimmable>true</IsTrimmable>
+            </ManagedAssemblyToLink>
+            <ManagedAssemblyToLink Condition="'%(Filename)' == 'System.Windows.Forms.Primitives'">
+                <IsTrimmable>true</IsTrimmable>
+            </ManagedAssemblyToLink>
+        </ItemGroup>
+    </Target>
 </Project>
