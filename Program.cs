@@ -1,5 +1,6 @@
 ﻿using Caffeinated.Helpers;
 using Caffeinated.Properties;
+using Humanizer;
 using Microsoft.Win32;
 using RegistryUtils;
 using System;
@@ -19,7 +20,9 @@ public class AppContext : ApplicationContext {
     private Icon? onIcon;
     private Icon? offIcon;
     private bool isActivated = false;
+    private DateTime? endTime;
     private readonly Timer? timer;
+    private readonly Timer updateTooltipTimer;
     private SettingsForm? settingsForm = null;
     private AboutForm? aboutForm = null;
     private bool isLightTheme = false;
@@ -52,6 +55,11 @@ public class AppContext : ApplicationContext {
         timer = new Timer(components);
         timer.Tick += new EventHandler(timer_Tick);
 
+        updateTooltipTimer = new Timer(components);
+        updateTooltipTimer.Tick += new EventHandler(UpdateTooltipTimer_Tick);
+        updateTooltipTimer.Interval = 10000; // 5 seconds
+        updateTooltipTimer.Start();
+
         appSettings = new AppSettings();
 
         SetIsLightTheme();
@@ -81,9 +89,20 @@ public class AppContext : ApplicationContext {
             deactivate();
         }
 
-        if (appSettings.ShowMessageOnLaunch) {
+        if (appSettings.ShowMessageOnLaunch || appSettings.IsFirstLaunch) {
+            if (appSettings.IsFirstLaunch)
+                appSettings.IsFirstLaunch = false;
+
             showSettings();
         }
+    }
+
+    private void UpdateTooltipTimer_Tick(object? sender, EventArgs e)
+    {
+        if (notifyIcon is null)
+            return;
+
+        updateNotifyIconText();
     }
 
     private void SetIsLightTheme(object? sender = null, EventArgs? e = null) {
@@ -351,17 +370,44 @@ public class AppContext : ApplicationContext {
             ShowError();
             ExitThread();
         }
-        if (duration > 0
+        int timerIntervalInMilliseconds = duration * 60 * 1000;
+        if (timerIntervalInMilliseconds > 0
             && timer != null) {
-            timer.Interval = duration * 60 * 1000;
+            timer.Interval = timerIntervalInMilliseconds;
             timer.Start();
+            endTime = DateTime.Now.AddMilliseconds(timerIntervalInMilliseconds);
+        }
+        else {
+            endTime = null;
         }
         isActivated = true;
 
-        if (notifyIcon != null) {
-            notifyIcon.Icon = onIcon;
-            notifyIcon.Text = "Caffeinated: sleep not allowed!";
+
+        if (notifyIcon is null)
+            return;
+
+        notifyIcon.Icon = onIcon;
+        updateNotifyIconText();
+    }
+
+    private void updateNotifyIconText() {
+        if (notifyIcon is null)
+            return;
+
+        if (notifyIcon.Icon == offIcon)
+        {
+            notifyIcon.Text = "Caffeinated: sleep allowed";
+            return;
         }
+
+        if (endTime is null) {
+            notifyIcon.Text = $"Caffeinated: No sleep indefinitely";
+            return;
+        }
+
+        string timeRemaining = endTime.Value.AddSeconds(2).Humanize() ;
+        Debug.WriteLine($"timeRemaining {timeRemaining}");
+        notifyIcon.Text = $"Caffeinated: No sleep for about {timeRemaining}";
     }
 
     private void deactivate() {
