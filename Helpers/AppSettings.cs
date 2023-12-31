@@ -18,6 +18,18 @@ namespace Caffeinated.Helpers {
             }
         }
 
+        private bool _isFirstLaunch;
+
+        public bool IsFirstLaunch
+        {
+            get { return _isFirstLaunch; }
+            set {
+                _isFirstLaunch = value;
+                localSettings.Values[nameof(IsFirstLaunch)] = _isFirstLaunch.ToString();
+            }
+        }
+
+
         private bool _automaticallyLaunchWithWindows;
 
         public bool AutomaticallyLaunchWithWindows {
@@ -71,44 +83,36 @@ namespace Caffeinated.Helpers {
         public AppSettings() {
 
             string ActivateOnLaunchSetting = (string)localSettings.Values[nameof(ActivateOnLaunch)];
-            if (ActivateOnLaunchSetting == null)
-                ActivateOnLaunchSetting = "false";
+            ActivateOnLaunchSetting ??= "false";
             _activateOnLaunch = bool.Parse(ActivateOnLaunchSetting);
+
+            string IsFirstLaunchSetting = (string)localSettings.Values[nameof(IsFirstLaunch)];
+            IsFirstLaunchSetting ??= "true";
+            _isFirstLaunch = bool.Parse(IsFirstLaunchSetting);
             
             string AutomaticallyLaunchWithWindowsSetting = (string)localSettings.Values[nameof(AutomaticallyLaunchWithWindows)];
-            if (AutomaticallyLaunchWithWindowsSetting == null)
-                AutomaticallyLaunchWithWindowsSetting = "false";
+            AutomaticallyLaunchWithWindowsSetting ??= "false";
             _automaticallyLaunchWithWindows = bool.Parse(AutomaticallyLaunchWithWindowsSetting);
             
             string ShowMessageOnLaunchSetting = (string)localSettings.Values[nameof(ShowMessageOnLaunch)];
-            if (ShowMessageOnLaunchSetting == null)
-                ShowMessageOnLaunchSetting = "true";
+            ShowMessageOnLaunchSetting ??= "false";
             _showMessageOnLaunch = bool.Parse(ShowMessageOnLaunchSetting);
             
             string DefaultDurationSetting = (string)localSettings.Values[nameof(DefaultDuration)];
-            if (DefaultDurationSetting == null)
-                DefaultDurationSetting = "0";
+            DefaultDurationSetting ??= "480";
             _defaultDuration = int.Parse(DefaultDurationSetting);
             
             string IconSetting = (string)localSettings.Values[nameof(Icon)];
-            if (IconSetting == null)
-                IconSetting = "default";
-            
-            switch (IconSetting) {
-                case "Mug":
-                    _icon = TrayIcon.Mug;
-                    break;
-                case "EyeWithZzz":
-                    _icon = TrayIcon.EyeWithZzz;
-                    break;
-                default:
-                    _icon = TrayIcon.Default;
-                    break;
-            }
+            IconSetting ??= "Mug";
 
+            _icon = IconSetting switch
+            {
+                "Mug" => TrayIcon.Mug,
+                "EyeWithZzz" => TrayIcon.EyeWithZzz,
+                _ => TrayIcon.Default,
+            };
             string DurationsSetting = (string)localSettings.Values[nameof(Durations)];
-            if (DurationsSetting == null)
-                DurationsSetting = "0,15,60,120,480";
+            DurationsSetting ??= "0,15,60,120,480";
             List<string> splitResult = DurationsSetting.Split(',').ToList();
 
             _durations = new ObservableCollection<int>();
@@ -118,7 +122,7 @@ namespace Caffeinated.Helpers {
             Durations.CollectionChanged += Durations_CollectionChanged;
         }
 
-        private void Durations_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+        private void Durations_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
             localSettings.Values[nameof(Durations)] = string.Join(',', Durations.ToArray());
         }
     }
