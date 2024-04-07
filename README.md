@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="https://github.com/TheJoeFin/Caffeinated/blob/master/Readme-Images/AppIcon.png">
+  <img width="128" align="center" src="https://github.com/TheJoeFin/Caffeinated/blob/master/readme-images/AppIcon.png">
 </p>
 <h1 align="center">
   Windows Caffeinated
@@ -9,7 +9,7 @@
 </p>
 <p align="center">
   <a href="https://apps.microsoft.com/store/detail/windows-caffeinated/9PBVHHSN78BL?cid=GitHub" target="_blank">
-    <img src="https://github.com/TheJoeFin/Caffeinated/blob/master/Readme-Images/storeBadge.png" width="200" alt="Store link" />
+    <img src="https://github.com/TheJoeFin/Caffeinated/blob/master/readme-images/storeBadge.png" width="200" alt="Store link" />
   </a>
 </p>
 
