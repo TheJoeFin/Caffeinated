@@ -1,5 +1,19 @@
-Caffeinated
------------
+<p align="center">
+  <img width="128" align="center" src="Readme-Images/AppIcon.png">
+</p>
+<h1 align="center">
+  Windows Caffeinated
+</h1>
+<p align="center">
+  Keep your device awake, that's it.
+</p>
+<p align="center">
+  <a href="https://apps.microsoft.com/store/detail/windows-caffeinated/9PBVHHSN78BL?cid=GitHub" target="_blank">
+    <img src="Readme-Images/storeBadge.png" width="200" alt="Store link" />
+  </a>
+</p>
+
+### Caffeinated
 
 A Windows app inspired by [Caffeine][1]. A small eye icon will appear in the System Tray which when toggled will enable and disable sleep. This project was originally created by [Desmond Brand][2] but was forked and is being updated by [TheJoeFin][3]. Part of the updates involved new icons which are still in the process of being refined. 
 
