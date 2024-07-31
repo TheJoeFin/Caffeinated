@@ -35,7 +35,7 @@ The future plans of Caffeinated involve:
 2. Simplify the settings and options
 3. Repo maintenance: updating screenshots, documenting plans, etc.
 
-Now Caffeinated can be accessed for free through the Microsoft Store under the name [Windows Caffeinated][4].
+Now Caffeinated can be accessed for free through the Microsoft Store under the name [Windows Caffeinated][4]. To uninstall just right click the app in the Start Menu and click Uninstall.
 
 The packaging resources can be accessed at [This Repo][5]
 
