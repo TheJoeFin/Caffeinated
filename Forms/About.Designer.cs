@@ -40,20 +40,20 @@
             // 
             VersionTxtBlk.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             VersionTxtBlk.AutoSize = true;
-            VersionTxtBlk.Location = new System.Drawing.Point(17, 254);
-            VersionTxtBlk.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            VersionTxtBlk.Location = new System.Drawing.Point(22, 325);
+            VersionTxtBlk.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             VersionTxtBlk.Name = "VersionTxtBlk";
-            VersionTxtBlk.Size = new System.Drawing.Size(113, 25);
+            VersionTxtBlk.Size = new System.Drawing.Size(148, 32);
             VersionTxtBlk.TabIndex = 13;
-            VersionTxtBlk.Text = "Version 1.7.0";
+            VersionTxtBlk.Text = "Version 1.8.0";
             // 
             // label3
             // 
             label3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            label3.Location = new System.Drawing.Point(17, 298);
-            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Location = new System.Drawing.Point(22, 381);
+            label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(307, 67);
+            label3.Size = new System.Drawing.Size(399, 86);
             label3.TabIndex = 14;
             label3.Text = "Prevents your PC from going to sleep or displaying the screen saver.";
             // 
@@ -61,10 +61,10 @@
             // 
             dmndLbl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dmndLbl.AutoSize = true;
-            dmndLbl.Location = new System.Drawing.Point(34, 365);
-            dmndLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            dmndLbl.Location = new System.Drawing.Point(44, 467);
+            dmndLbl.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             dmndLbl.Name = "dmndLbl";
-            dmndLbl.Size = new System.Drawing.Size(0, 25);
+            dmndLbl.Size = new System.Drawing.Size(0, 32);
             dmndLbl.TabIndex = 17;
             dmndLbl.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             dmndLbl.LinkClicked += linkLbl_LinkClicked;
@@ -73,10 +73,10 @@
             // 
             caffeineLbl.AutoSize = true;
             caffeineLbl.LinkArea = new System.Windows.Forms.LinkArea(0, 0);
-            caffeineLbl.Location = new System.Drawing.Point(17, 365);
-            caffeineLbl.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            caffeineLbl.Location = new System.Drawing.Point(22, 467);
+            caffeineLbl.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             caffeineLbl.Name = "caffeineLbl";
-            caffeineLbl.Size = new System.Drawing.Size(247, 25);
+            caffeineLbl.Size = new System.Drawing.Size(329, 32);
             caffeineLbl.TabIndex = 18;
             caffeineLbl.Text = "Inspired by Caffeine for OS X.";
             caffeineLbl.LinkClicked += linkLbl_LinkClicked;
@@ -85,10 +85,10 @@
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            label1.Location = new System.Drawing.Point(17, 209);
-            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label1.Location = new System.Drawing.Point(22, 268);
+            label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(133, 30);
+            label1.Size = new System.Drawing.Size(183, 41);
             label1.TabIndex = 20;
             label1.Text = "Caffeinated";
             label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -97,9 +97,10 @@
             // 
             OriginallyByLink.AutoSize = true;
             OriginallyByLink.LinkArea = new System.Windows.Forms.LinkArea(14, 18);
-            OriginallyByLink.Location = new System.Drawing.Point(17, 439);
+            OriginallyByLink.Location = new System.Drawing.Point(22, 562);
+            OriginallyByLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             OriginallyByLink.Name = "OriginallyByLink";
-            OriginallyByLink.Size = new System.Drawing.Size(163, 30);
+            OriginallyByLink.Size = new System.Drawing.Size(217, 38);
             OriginallyByLink.TabIndex = 21;
             OriginallyByLink.TabStop = true;
             OriginallyByLink.Text = "Originally by dmnd";
@@ -110,9 +111,10 @@
             // 
             ForkedByTheJoeFinLink.AutoSize = true;
             ForkedByTheJoeFinLink.LinkArea = new System.Windows.Forms.LinkArea(10, 19);
-            ForkedByTheJoeFinLink.Location = new System.Drawing.Point(198, 439);
+            ForkedByTheJoeFinLink.Location = new System.Drawing.Point(257, 562);
+            ForkedByTheJoeFinLink.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             ForkedByTheJoeFinLink.Name = "ForkedByTheJoeFinLink";
-            ForkedByTheJoeFinLink.Size = new System.Drawing.Size(174, 30);
+            ForkedByTheJoeFinLink.Size = new System.Drawing.Size(232, 38);
             ForkedByTheJoeFinLink.TabIndex = 22;
             ForkedByTheJoeFinLink.TabStop = true;
             ForkedByTheJoeFinLink.Text = "Forked by TheJoeFin";
@@ -122,9 +124,10 @@
             // pictureBox1
             // 
             pictureBox1.Image = Properties.Resources.Caffeine_Black_96;
-            pictureBox1.Location = new System.Drawing.Point(17, 20);
+            pictureBox1.Location = new System.Drawing.Point(22, 26);
+            pictureBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new System.Drawing.Size(175, 175);
+            pictureBox1.Size = new System.Drawing.Size(227, 224);
             pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 23;
             pictureBox1.TabStop = false;
@@ -132,9 +135,10 @@
             // RateLabel
             // 
             RateLabel.AutoSize = true;
-            RateLabel.Location = new System.Drawing.Point(34, 494);
+            RateLabel.Location = new System.Drawing.Point(44, 632);
+            RateLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             RateLabel.Name = "RateLabel";
-            RateLabel.Size = new System.Drawing.Size(316, 25);
+            RateLabel.Size = new System.Drawing.Size(426, 32);
             RateLabel.TabIndex = 24;
             RateLabel.TabStop = true;
             RateLabel.Text = "Rate Windows Caffeinated in the Store";
@@ -142,9 +146,9 @@
             // 
             // AboutForm
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
+            AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(378, 559);
+            ClientSize = new System.Drawing.Size(491, 716);
             Controls.Add(RateLabel);
             Controls.Add(pictureBox1);
             Controls.Add(ForkedByTheJoeFinLink);
@@ -156,11 +160,11 @@
             Controls.Add(VersionTxtBlk);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
-            Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "AboutForm";
-            Padding = new System.Windows.Forms.Padding(14, 17, 14, 17);
+            Padding = new System.Windows.Forms.Padding(18, 22, 18, 22);
             ShowIcon = false;
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
