@@ -14,9 +14,9 @@ using System.Windows.Forms;
 
 namespace Caffeinated;
 
-public class AppContext : ApplicationContext {
+public partial class AppContext : ApplicationContext {
     private readonly NotifyIcon? notifyIcon;
-    private readonly IContainer? components;
+    private readonly Container? components;
     private Icon? onIcon;
     private Icon? offIcon;
     private bool isActivated = false;
@@ -83,7 +83,7 @@ public class AppContext : ApplicationContext {
         setContextMenu();
 
         if (appSettings.ActivateOnLaunch) {
-            activate(Settings.Default.DefaultDuration);
+            activate(appSettings.DefaultDuration);
         }
         else {
             deactivate();
@@ -138,10 +138,6 @@ public class AppContext : ApplicationContext {
                 notifyIcon.Icon = offIcon;
             }
         }
-    }
-
-    private static String HexConverter(Color c) {
-        return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
     }
 
     private void setIcons() {
@@ -238,7 +234,7 @@ public class AppContext : ApplicationContext {
 
         // we want the lower durations to be closer to the mouse. So, 
         ObservableCollection<int>? times = appSettings.Durations;
-        IEnumerable<int> sortedTimes = Enumerable.Empty<int>();
+        IEnumerable<int> sortedTimes = [];
         if ((new Taskbar()).Position == TaskbarPosition.Top) {
             if (times != null) {
                 sortedTimes = times.OrderBy(i => i);
@@ -261,11 +257,11 @@ public class AppContext : ApplicationContext {
         };
 
         contextMenu.Items.AddRange(
-            new ToolStripMenuItem[] {
+            [
                 settingsItem,
                 aboutItem,
                 exitItem
-            }
+            ]
         );
         contextMenu.Items.Add(new ToolStripSeparator());
 
