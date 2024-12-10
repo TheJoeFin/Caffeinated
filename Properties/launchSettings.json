@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Caffeinated": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

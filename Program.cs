@@ -22,7 +22,7 @@ public class AppContext : ApplicationContext {
     private bool isActivated = false;
     private DateTime? endTime;
     private readonly Timer? timer;
-    private readonly Timer updateTooltipTimer;
+    private readonly Timer updateTooltipTimer = new();
     private SettingsForm? settingsForm = null;
     private AboutForm? aboutForm = null;
     private bool isLightTheme = false;
