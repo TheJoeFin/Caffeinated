@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 using Caffeinated.Helpers;
+using Caffeinated.Properties;
 using Windows.ApplicationModel;
 
 namespace Caffeinated;
@@ -41,6 +43,70 @@ public partial class SettingsForm : BaseForm {
 
         setStartupCheckBox();
         setRadioButtons();
+    }
+
+    private static Bitmap IconToBitmap(Icon icon, int size) {
+        Bitmap bitmap = new(size, size, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        using (Graphics g = Graphics.FromImage(bitmap)) {
+            g.Clear(Color.Transparent);
+            g.DrawIcon(icon, new Rectangle(0, 0, size, size));
+        }
+        return bitmap;
+    }
+
+    protected override void UpdateTheme() {
+        base.UpdateTheme();
+        
+        // Update all labels to use proper foreground color
+        label1.ForeColor = ForeColor;
+        label2.ForeColor = ForeColor;
+        label3.ForeColor = ForeColor;
+        OffIconLbl.ForeColor = ForeColor;
+        OnIconLbl.ForeColor = ForeColor;
+        CustomDurationLBL.ForeColor = ForeColor;
+        
+        // Update main icon based on theme - use light colored icons for dark mode
+        pictureBox1.Image = IsDarkMode ? Resources.cup_coffee_icon_96 : Resources.Caffeine_Black_96;
+        
+        // Update default icon set (row 1)
+        // In dark mode, use light-colored icons; in light mode, use black icons
+        if (IsDarkMode) {
+            pictureBox2.Image = IconToBitmap(Resources.cup_coffee_icon_bw, 80);
+            pictureBox3.Image = Resources.cup_coffee_icon_64;
+        } else {
+            pictureBox2.Image = Resources.SleepEye_Black;
+            pictureBox3.Image = Resources.Caffeine_Black_512;
+        }
+        
+        // Update eye with zzz icon set (row 2)
+        if (IsDarkMode) {
+            pictureBox4.Image = IconToBitmap(Resources.Eye_zzz_Sleep_icon, 80);
+            pictureBox5.Image = IconToBitmap(Resources.Eye_zzz_Active_icon, 80);
+        } else {
+            pictureBox4.Image = Resources.Eye_zzz_Sleep_Black;
+            pictureBox5.Image = Resources.Eye_zzz_Active_Black;
+        }
+        
+        // Update mug icon set (row 3)
+        if (IsDarkMode) {
+            pictureBox6.Image = IconToBitmap(Resources.mug_sleep_icon, 80);
+            pictureBox7.Image = IconToBitmap(Resources.mug_active_icon, 80);
+        } else {
+            pictureBox6.Image = Resources.Mug_Sleep_Black;
+            pictureBox7.Image = Resources.Mug_Active_Black;
+        }
+        
+        // Update TableLayoutPanels background
+        tableLayoutPanel1.BackColor = BackColor;
+        tableLayoutPanel2.BackColor = BackColor;
+        tableLayoutPanel3.BackColor = BackColor;
+        tableLayoutPanel4.BackColor = BackColor;
+        
+        // Update picture boxes background
+        pictureBox1.BackColor = BackColor;
+        
+        // Force refresh
+        Refresh();
     }
 
     private void setRadioButtons() {

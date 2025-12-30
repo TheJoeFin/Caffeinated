@@ -1,14 +1,67 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Windows.Forms;
+using System.Drawing;
 using System.IO;
 using Windows.System;
 using System;
+using Caffeinated.Properties;
 
 namespace Caffeinated;
 
 partial class AboutForm : BaseForm {
     public AboutForm() : base() {
         InitializeComponent();
+    }
+
+    protected override void UpdateTheme() {
+        base.UpdateTheme();
+
+        // Update all labels to use proper foreground color
+        VersionTxtBlk.ForeColor = ForeColor;
+        label3.ForeColor = ForeColor;
+        label1.ForeColor = ForeColor;
+
+        // Update LinkLabel colors for better visibility in dark mode
+        Color linkColor;
+        Color visitedLinkColor;
+        Color activeLinkColor;
+
+        if (IsDarkMode) {
+            // Light colors for dark background
+            linkColor = Color.FromArgb(100, 181, 246);        // Light blue
+            visitedLinkColor = Color.FromArgb(186, 104, 200); // Light purple
+            activeLinkColor = Color.FromArgb(144, 202, 249);  // Lighter blue
+        } else {
+            // Standard colors for light background
+            linkColor = Color.FromArgb(0, 0, 255);            // Blue
+            visitedLinkColor = Color.FromArgb(128, 0, 128);   // Purple
+            activeLinkColor = Color.FromArgb(255, 0, 0);      // Red
+        }
+
+        // Apply to all LinkLabels
+        dmndLbl.LinkColor = linkColor;
+        dmndLbl.VisitedLinkColor = visitedLinkColor;
+        dmndLbl.ActiveLinkColor = activeLinkColor;
+
+        caffeineLbl.LinkColor = linkColor;
+        caffeineLbl.VisitedLinkColor = visitedLinkColor;
+        caffeineLbl.ActiveLinkColor = activeLinkColor;
+
+        OriginallyByLink.LinkColor = linkColor;
+        OriginallyByLink.VisitedLinkColor = visitedLinkColor;
+        OriginallyByLink.ActiveLinkColor = activeLinkColor;
+
+        ForkedByTheJoeFinLink.LinkColor = linkColor;
+        ForkedByTheJoeFinLink.VisitedLinkColor = visitedLinkColor;
+        ForkedByTheJoeFinLink.ActiveLinkColor = activeLinkColor;
+
+        RateLabel.LinkColor = linkColor;
+        RateLabel.VisitedLinkColor = visitedLinkColor;
+        RateLabel.ActiveLinkColor = activeLinkColor;
+
+        // Update icon based on theme
+        pictureBox1.Image = IsDarkMode ? Resources.cup_coffee_icon_96 : Resources.Caffeine_Black_96;
+        pictureBox1.BackColor = BackColor;
     }
 
     #region Assembly Attribute Accessors
