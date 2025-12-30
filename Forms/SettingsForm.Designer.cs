@@ -24,6 +24,7 @@ namespace Caffeinated {
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
@@ -57,6 +58,7 @@ namespace Caffeinated {
             tooltipFormatLBL = new System.Windows.Forms.Label();
             generalTooltipRDBTN = new System.Windows.Forms.RadioButton();
             specificTooltipRDBTN = new System.Windows.Forms.RadioButton();
+            tooltipProvider = new System.Windows.Forms.ToolTip(components);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -474,6 +476,7 @@ namespace Caffeinated {
             generalTooltipRDBTN.TabIndex = 1;
             generalTooltipRDBTN.TabStop = true;
             generalTooltipRDBTN.Text = "General";
+            tooltipProvider.SetToolTip(generalTooltipRDBTN, "Example: \"No sleep for about 3 hours\"");
             generalTooltipRDBTN.UseVisualStyleBackColor = true;
             generalTooltipRDBTN.Click += generalTooltipRDBTN_Click;
             // 
@@ -487,6 +490,7 @@ namespace Caffeinated {
             specificTooltipRDBTN.TabIndex = 2;
             specificTooltipRDBTN.TabStop = true;
             specificTooltipRDBTN.Text = "Specific";
+            tooltipProvider.SetToolTip(specificTooltipRDBTN, "Example: \"No sleep for 2 hours and 47 minutes\"");
             specificTooltipRDBTN.UseVisualStyleBackColor = true;
             specificTooltipRDBTN.Click += specificTooltipRDBTN_Click;
             // 
@@ -564,5 +568,6 @@ namespace Caffeinated {
         private System.Windows.Forms.Label tooltipFormatLBL;
         private System.Windows.Forms.RadioButton generalTooltipRDBTN;
         private System.Windows.Forms.RadioButton specificTooltipRDBTN;
+        private System.Windows.Forms.ToolTip tooltipProvider;
     }
 }

@@ -561,6 +561,7 @@ public partial class AppContext : ApplicationContext {
             TimeSpan remaining = endTime.Value - DateTime.Now;
             int hours = (int)remaining.TotalHours;
             int minutes = remaining.Minutes;
+            int seconds = remaining.Seconds;
 
             string timeText;
             if (hours > 0 && minutes > 0) {
@@ -569,8 +570,14 @@ public partial class AppContext : ApplicationContext {
             else if (hours > 0) {
                 timeText = $"{hours} hour{(hours != 1 ? "s" : "")}";
             }
-            else {
+            else if (minutes >= 5) {
                 timeText = $"{minutes} minute{(minutes != 1 ? "s" : "")}";
+            }
+            else if (minutes > 0) {
+                timeText = $"{minutes} minute{(minutes != 1 ? "s" : "")} and {seconds} second{(seconds != 1 ? "s" : "")}";
+            }
+            else {
+                timeText = $"less than {seconds} second{(seconds != 1 ? "s" : "")}";
             }
 
             notifyIcon.Text = $"Caffeinated: No sleep for {timeText}";
