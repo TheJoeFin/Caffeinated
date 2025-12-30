@@ -70,6 +70,16 @@ namespace Caffeinated.Helpers {
             }
         }
 
+        private TooltipFormat _tooltipFormat;
+
+        public TooltipFormat TooltipFormat {
+            get { return _tooltipFormat; }
+            set {
+                _tooltipFormat = value;
+                localSettings.Values[nameof(TooltipFormat)] = _tooltipFormat.ToString();
+            }
+        }
+
         private ObservableCollection<int> _durations;
 
         public ObservableCollection<int> Durations {
@@ -111,6 +121,16 @@ namespace Caffeinated.Helpers {
                 "EyeWithZzz" => TrayIcon.EyeWithZzz,
                 _ => TrayIcon.Default,
             };
+
+            string TooltipFormatSetting = (string)localSettings.Values[nameof(TooltipFormat)];
+            TooltipFormatSetting ??= "General";
+
+            _tooltipFormat = TooltipFormatSetting switch
+            {
+                "Specific" => TooltipFormat.Specific,
+                _ => TooltipFormat.General,
+            };
+
             string DurationsSetting = (string)localSettings.Values[nameof(Durations)];
             DurationsSetting ??= "0,15,60,120,480";
             List<string> splitResult = DurationsSetting.Split(',').ToList();

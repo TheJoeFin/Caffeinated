@@ -53,6 +53,10 @@ namespace Caffeinated {
             CustomDurationLBL = new System.Windows.Forms.Label();
             CustomDurationTXBX = new System.Windows.Forms.TextBox();
             addCustomDurationBTN = new System.Windows.Forms.Button();
+            tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
+            tooltipFormatLBL = new System.Windows.Forms.Label();
+            generalTooltipRDBTN = new System.Windows.Forms.RadioButton();
+            specificTooltipRDBTN = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -64,6 +68,7 @@ namespace Caffeinated {
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
             tableLayoutPanel4.SuspendLayout();
+            tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -139,6 +144,7 @@ namespace Caffeinated {
             tableLayoutPanel1.Controls.Add(StartupChkBox, 0, 0);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 0, 7);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 6);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel5, 0, 3);
             tableLayoutPanel1.Location = new System.Drawing.Point(242, 285);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -431,6 +437,59 @@ namespace Caffeinated {
             addCustomDurationBTN.UseVisualStyleBackColor = true;
             addCustomDurationBTN.Click += addCustomDurationBTN_Click;
             // 
+            // tableLayoutPanel5
+            // 
+            tableLayoutPanel5.ColumnCount = 3;
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 195F));
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel5.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanel5.Controls.Add(tooltipFormatLBL, 0, 0);
+            tableLayoutPanel5.Controls.Add(generalTooltipRDBTN, 1, 0);
+            tableLayoutPanel5.Controls.Add(specificTooltipRDBTN, 2, 0);
+            tableLayoutPanel5.Location = new System.Drawing.Point(4, 144);
+            tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            tableLayoutPanel5.Name = "tableLayoutPanel5";
+            tableLayoutPanel5.RowCount = 1;
+            tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel5.Size = new System.Drawing.Size(508, 56);
+            tableLayoutPanel5.TabIndex = 16;
+            // 
+            // tooltipFormatLBL
+            // 
+            tooltipFormatLBL.AutoSize = true;
+            tooltipFormatLBL.Location = new System.Drawing.Point(4, 0);
+            tooltipFormatLBL.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            tooltipFormatLBL.Name = "tooltipFormatLBL";
+            tooltipFormatLBL.Size = new System.Drawing.Size(166, 32);
+            tooltipFormatLBL.TabIndex = 0;
+            tooltipFormatLBL.Text = "Tooltip format:";
+            // 
+            // generalTooltipRDBTN
+            // 
+            generalTooltipRDBTN.AutoSize = true;
+            generalTooltipRDBTN.Location = new System.Drawing.Point(199, 4);
+            generalTooltipRDBTN.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            generalTooltipRDBTN.Name = "generalTooltipRDBTN";
+            generalTooltipRDBTN.Size = new System.Drawing.Size(120, 36);
+            generalTooltipRDBTN.TabIndex = 1;
+            generalTooltipRDBTN.TabStop = true;
+            generalTooltipRDBTN.Text = "General";
+            generalTooltipRDBTN.UseVisualStyleBackColor = true;
+            generalTooltipRDBTN.Click += generalTooltipRDBTN_Click;
+            // 
+            // specificTooltipRDBTN
+            // 
+            specificTooltipRDBTN.AutoSize = true;
+            specificTooltipRDBTN.Location = new System.Drawing.Point(327, 4);
+            specificTooltipRDBTN.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            specificTooltipRDBTN.Name = "specificTooltipRDBTN";
+            specificTooltipRDBTN.Size = new System.Drawing.Size(117, 36);
+            specificTooltipRDBTN.TabIndex = 2;
+            specificTooltipRDBTN.TabStop = true;
+            specificTooltipRDBTN.Text = "Specific";
+            specificTooltipRDBTN.UseVisualStyleBackColor = true;
+            specificTooltipRDBTN.Click += specificTooltipRDBTN_Click;
+            // 
             // SettingsForm
             // 
             AcceptButton = okBtn;
@@ -466,6 +525,8 @@ namespace Caffeinated {
             ((System.ComponentModel.ISupportInitialize)pictureBox7).EndInit();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
+            tableLayoutPanel5.ResumeLayout(false);
+            tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -499,5 +560,9 @@ namespace Caffeinated {
         private System.Windows.Forms.Label CustomDurationLBL;
         private System.Windows.Forms.TextBox CustomDurationTXBX;
         private System.Windows.Forms.Button addCustomDurationBTN;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
+        private System.Windows.Forms.Label tooltipFormatLBL;
+        private System.Windows.Forms.RadioButton generalTooltipRDBTN;
+        private System.Windows.Forms.RadioButton specificTooltipRDBTN;
     }
 }

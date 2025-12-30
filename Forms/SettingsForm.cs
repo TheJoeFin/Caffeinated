@@ -64,6 +64,7 @@ public partial class SettingsForm : BaseForm {
         OffIconLbl.ForeColor = ForeColor;
         OnIconLbl.ForeColor = ForeColor;
         CustomDurationLBL.ForeColor = ForeColor;
+        tooltipFormatLBL.ForeColor = ForeColor;
         
         // Update main icon based on theme - use light colored icons for dark mode
         pictureBox1.Image = IsDarkMode ? Resources.cup_coffee_icon_96 : Resources.Caffeine_Black_96;
@@ -119,6 +120,15 @@ public partial class SettingsForm : BaseForm {
                 break;
             default:
                 defaultRDBTN.Checked = true;
+                break;
+        }
+
+        switch (appSettings.TooltipFormat) {
+            case TooltipFormat.Specific:
+                specificTooltipRDBTN.Checked = true;
+                break;
+            default:
+                generalTooltipRDBTN.Checked = true;
                 break;
         }
     }
@@ -268,5 +278,13 @@ public partial class SettingsForm : BaseForm {
 
     private void SettingsAtLaunchChkBox_CheckedChanged(object sender, EventArgs e) {
         appSettings.ShowMessageOnLaunch = SettingsAtLaunchChkBox.Checked;
+    }
+
+    private void generalTooltipRDBTN_Click(object sender, EventArgs e) {
+        appSettings.TooltipFormat = TooltipFormat.General;
+    }
+
+    private void specificTooltipRDBTN_Click(object sender, EventArgs e) {
+        appSettings.TooltipFormat = TooltipFormat.Specific;
     }
 }

@@ -449,9 +449,32 @@ public partial class AppContext : ApplicationContext {
             return;
         }
 
-        string timeRemaining = endTime.Value.AddSeconds(2).Humanize() ;
-        Debug.WriteLine($"timeRemaining {timeRemaining}");
-        notifyIcon.Text = $"Caffeinated: No sleep for about {timeRemaining}";
+        if (appSettings is null)
+            return;
+
+        if (appSettings.TooltipFormat == TooltipFormat.Specific) {
+            TimeSpan remaining = endTime.Value - DateTime.Now;
+            int hours = (int)remaining.TotalHours;
+            int minutes = remaining.Minutes;
+
+            string timeText;
+            if (hours > 0 && minutes > 0) {
+                timeText = $"{hours} hour{(hours != 1 ? "s" : "")} and {minutes} minute{(minutes != 1 ? "s" : "")}";
+            }
+            else if (hours > 0) {
+                timeText = $"{hours} hour{(hours != 1 ? "s" : "")}";
+            }
+            else {
+                timeText = $"{minutes} minute{(minutes != 1 ? "s" : "")}";
+            }
+
+            notifyIcon.Text = $"Caffeinated: No sleep for {timeText}";
+        }
+        else {
+            string timeRemaining = endTime.Value.AddSeconds(2).Humanize();
+            Debug.WriteLine($"timeRemaining {timeRemaining}");
+            notifyIcon.Text = $"Caffeinated: No sleep for about {timeRemaining}";
+        }
     }
 
     private void deactivate() {

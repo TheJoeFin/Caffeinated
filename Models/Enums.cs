@@ -5,3 +5,8 @@ public enum TrayIcon {
     Mug,
     EyeWithZzz
 }
+
+public enum TooltipFormat {
+    General,
+    Specific
+}
