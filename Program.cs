@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Caffeinated;
@@ -21,20 +22,40 @@ public partial class AppContext : ApplicationContext {
     private Icon? offIcon;
     private bool isActivated = false;
     private DateTime? endTime;
-    private readonly Timer? timer;
-    private readonly Timer updateTooltipTimer = new();
+    private readonly System.Windows.Forms.Timer? timer;
+    private readonly System.Windows.Forms.Timer updateTooltipTimer = new();
     private SettingsForm? settingsForm = null;
     private AboutForm? aboutForm = null;
     private bool isLightTheme = false;
     private readonly AppSettings? appSettings;
     private const string themeKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+    private readonly Lock iconLock = new();
+    private static readonly Dictionary<string, Bitmap> symbolCache = new();
+    private readonly MessageWindow? messageWindow;
+
+    private const int WM_QUERYENDSESSION = 0x0011;
+    private const int WM_ENDSESSION = 0x0016;
+    private const int ENDSESSION_CLOSEAPP = 0x1;
 
     [STAThread]
     private static void Main() {
+        // Add global exception handlers
+        Application.ThreadException += Application_ThreadException;
+        AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
         Application.SetColorMode(SystemColorMode.System);
+
+        // Register for restart after updates/shutdowns
+        // Don't restart after crashes or hangs - only for system updates
+        _ = NativeMethods.RegisterApplicationRestart(
+            null,
+            NativeMethods.RESTART_NO_CRASH | NativeMethods.RESTART_NO_HANG
+        );
+
         AppContext? context = new();
         if (context.notifyIcon == null) {
             Application.Exit();
@@ -44,19 +65,79 @@ public partial class AppContext : ApplicationContext {
         }
     }
 
+    private static void Application_ThreadException(object? sender, ThreadExceptionEventArgs e) {
+        Debug.WriteLine($"UI Thread Exception: {e.Exception}");
+        MessageBox.Show(
+            $"An error occurred: {e.Exception.Message}\n\nThe application will continue running.",
+            "Caffeinated - Error",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error
+        );
+    }
+
+    private static void CurrentDomain_UnhandledException(object? sender, UnhandledExceptionEventArgs e) {
+        Debug.WriteLine($"Unhandled Exception: {e.ExceptionObject}");
+        // Log to file or event log in production
+    }
+
+    internal void PerformGracefulShutdown() {
+        try {
+            // 1. Stop all timers immediately
+            timer?.Stop();
+            updateTooltipTimer?.Stop();
+
+            // 2. Deactivate caffeination
+            _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
+
+            // 3. Save settings (already auto-saved via AppSettings setters)
+
+            // 4. Dispose resources
+            lock (iconLock) {
+                onIcon?.Dispose();
+                offIcon?.Dispose();
+            }
+
+            notifyIcon?.Dispose();
+            components?.Dispose();
+
+            // 5. Exit cleanly
+            ExitThread();
+        }
+        catch {
+            // Swallow exceptions during shutdown - we're terminating anyway
+        }
+    }
+
+    private static bool IsAnotherInstanceRunning() {
+        Process current = Process.GetCurrentProcess();
+        Process[] processes = Process.GetProcessesByName(current.ProcessName);
+
+        return processes.Length > 1;
+    }
+
+    private void SystemEvents_SessionEnding(object? sender, SessionEndingEventArgs e) {
+        // User is logging off or system is shutting down
+        PerformGracefulShutdown();
+    }
+
     public AppContext() {
         // Caffeinated.exe
-        Process[]? processes = Process.GetProcessesByName("Caffeinated");
-        if (processes.Length > 1) {
+        if (IsAnotherInstanceRunning()) {
             // Is already running
             return;
         }
 
+        // Create hidden window to receive Windows messages
+        messageWindow = new MessageWindow(this);
+
+        // Subscribe to session ending events
+        SystemEvents.SessionEnding += SystemEvents_SessionEnding;
+
         components = new Container();
-        timer = new Timer(components);
+        timer = new System.Windows.Forms.Timer(components);
         timer.Tick += new EventHandler(timer_Tick);
 
-        updateTooltipTimer = new Timer(components);
+        updateTooltipTimer = new System.Windows.Forms.Timer(components);
         updateTooltipTimer.Tick += new EventHandler(UpdateTooltipTimer_Tick);
         updateTooltipTimer.Interval = 10000; // 5 seconds
         updateTooltipTimer.Start();
@@ -128,6 +209,9 @@ public partial class AppContext : ApplicationContext {
             isLightTheme = false;
         }
 
+        // Clear symbol cache when theme changes
+        ClearSymbolCache();
+
         setIcons();
         setContextMenu();
 
@@ -146,75 +230,81 @@ public partial class AppContext : ApplicationContext {
             return;
         }
 
-        switch (appSettings.Icon)
-        {
-            case TrayIcon.Mug:
-                if (isLightTheme) {
-                    offIcon = new Icon(
-                        Resources.Mug_Sleep_Black_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                    onIcon = new Icon(
-                        Resources.Mug_Active_Black_icon,
-                        SystemInformation.SmallIconSize
-                        );
-                }
-                else {
-                    offIcon = new Icon(
-                        Resources.mug_sleep_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                    onIcon = new Icon(
-                        Resources.mug_active_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                }
+        lock (iconLock) {
+            // Dispose old icons before creating new ones
+            onIcon?.Dispose();
+            offIcon?.Dispose();
 
-                break;
-            case TrayIcon.EyeWithZzz:
-                if (isLightTheme) {
-                    offIcon = new Icon(
-                        Resources.Eye_zzz_Sleep_Black_icon,
+            switch (appSettings.Icon)
+            {
+                case TrayIcon.Mug:
+                    if (isLightTheme) {
+                        offIcon = new Icon(
+                            Resources.Mug_Sleep_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        onIcon = new Icon(
+                            Resources.Mug_Active_Black_icon,
+                            SystemInformation.SmallIconSize
+                            );
+                    }
+                    else {
+                        offIcon = new Icon(
+                            Resources.mug_sleep_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        onIcon = new Icon(
+                            Resources.mug_active_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+
+                    break;
+                case TrayIcon.EyeWithZzz:
+                    if (isLightTheme) {
+                        offIcon = new Icon(
+                            Resources.Eye_zzz_Sleep_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        onIcon = new Icon(
+                            Resources.Eye_zzz_Active_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+                    else {
+                        offIcon = new Icon(
+                            Resources.Eye_zzz_Sleep_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                        onIcon = new Icon(
+                            Resources.Eye_zzz_Active_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+                    break;
+                default:
+                    if (isLightTheme) {
+                        offIcon = new Icon(
+                        Resources.Caffeine_Black_icon,
                         SystemInformation.SmallIconSize
                     );
-                    onIcon = new Icon(
-                        Resources.Eye_zzz_Active_Black_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                }
-                else {
-                    offIcon = new Icon(
-                        Resources.Eye_zzz_Sleep_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                    onIcon = new Icon(
-                        Resources.Eye_zzz_Active_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                }
-                break;
-            default:
-                if (isLightTheme) {
-                    offIcon = new Icon(
-                    Resources.Caffeine_Black_icon,
-                    SystemInformation.SmallIconSize
-                );
-                    onIcon = new Icon(
-                        Resources.SleepEye_Black_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                }
-                else {
-                    offIcon = new Icon(
-                        Resources.cup_coffee_icon_bw,
-                        SystemInformation.SmallIconSize
-                    );
-                    onIcon = new Icon(
-                        Resources.cup_coffee_icon,
-                        SystemInformation.SmallIconSize
-                    );
-                }
-                break;
+                        onIcon = new Icon(
+                            Resources.SleepEye_Black_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+                    else {
+                        offIcon = new Icon(
+                            Resources.cup_coffee_icon_bw,
+                            SystemInformation.SmallIconSize
+                        );
+                        onIcon = new Icon(
+                            Resources.cup_coffee_icon,
+                            SystemInformation.SmallIconSize
+                        );
+                    }
+                    break;
+            }
         }
     }
 
@@ -302,6 +392,12 @@ public partial class AppContext : ApplicationContext {
     }
 
     private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
+        string cacheKey = $"{symbol}_{isLightTheme}";
+
+        if (symbolCache.TryGetValue(cacheKey, out Bitmap? cached)) {
+            return cached;
+        }
+
         int size = 16;
         int padding = 2;
         int totalSize = size + (padding * 2);
@@ -322,7 +418,16 @@ public partial class AppContext : ApplicationContext {
 
         graphics.DrawString(symbol, font, brush, new RectangleF(padding, padding, size, size), format);
 
+        symbolCache[cacheKey] = bitmap;
+
         return bitmap;
+    }
+
+    private static void ClearSymbolCache() {
+        foreach (Bitmap? bitmap in symbolCache.Values) {
+            bitmap?.Dispose();
+        }
+        symbolCache.Clear();
     }
 
     private void aboutItem_Click(object? sender, EventArgs e) {
@@ -500,11 +605,67 @@ public partial class AppContext : ApplicationContext {
     }
 
         protected override void Dispose(bool disposing) {
-            if (disposing && components != null) {
-                components.Dispose();
+            if (disposing) {
+                // Unsubscribe from system events
+                SystemEvents.SessionEnding -= SystemEvents_SessionEnding;
+
+                lock (iconLock) {
+                    onIcon?.Dispose();
+                    offIcon?.Dispose();
+                }
+
+                // Clear symbol cache
+                ClearSymbolCache();
+
+                timer?.Dispose();
+                updateTooltipTimer?.Dispose();
+                messageWindow?.Dispose();
+
+                components?.Dispose();
             }
 
             base.Dispose(disposing);
+        }
+    }
+
+    // Hidden window to receive Windows messages for shutdown handling
+    internal class MessageWindow : Form {
+        private readonly AppContext appContext;
+
+        public MessageWindow(AppContext context) {
+            appContext = context;
+            // Create hidden window
+            ShowInTaskbar = false;
+            WindowState = FormWindowState.Minimized;
+            Opacity = 0;
+            Width = 0;
+            Height = 0;
+        }
+
+        protected override void WndProc(ref Message m) {
+            switch (m.Msg) {
+                case 0x0011: // WM_QUERYENDSESSION
+                    // Check if this is from Restart Manager
+                    if (m.LParam.ToInt32() == 0x1) { // ENDSESSION_CLOSEAPP
+                        // Return TRUE - we're ready to shutdown
+                        m.Result = new IntPtr(1);
+                        return;
+                    }
+                    break;
+
+                case 0x0016: // WM_ENDSESSION
+                    // Check if this is from Restart Manager and we should actually close
+                    if (m.LParam.ToInt32() == 0x1 && // ENDSESSION_CLOSEAPP
+                        m.WParam.ToInt32() != 0) {
+                        // Perform quick shutdown
+                        appContext.PerformGracefulShutdown();
+                        m.Result = IntPtr.Zero;
+                        return;
+                    }
+                    break;
+            }
+
+            base.WndProc(ref m);
         }
     }
 

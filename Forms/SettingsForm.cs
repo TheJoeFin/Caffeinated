@@ -169,24 +169,31 @@ public partial class SettingsForm : BaseForm {
     }
 
     private async void setStartupCheckBox() {
-        StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
-        Debug.WriteLine("Startup is " + startupTask.State.ToString());
+        try {
+            StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
+            Debug.WriteLine("Startup is " + startupTask.State.ToString());
 
-        switch (startupTask.State) {
-            case StartupTaskState.Disabled:
-                // Task is disabled but can be enabled.
-                StartupChkBox.Checked = false;
-                break;
-            case StartupTaskState.DisabledByUser:
-                // Task is disabled and user must enable it manually.
-                StartupChkBox.Checked = false;
-                StartupChkBox.Enabled = false;
+            switch (startupTask.State) {
+                case StartupTaskState.Disabled:
+                    // Task is disabled but can be enabled.
+                    StartupChkBox.Checked = false;
+                    break;
+                case StartupTaskState.DisabledByUser:
+                    // Task is disabled and user must enable it manually.
+                    StartupChkBox.Checked = false;
+                    StartupChkBox.Enabled = false;
 
-                StartupChkBox.Text += "\nDisabled in Task Manager";
-                break;
-            case StartupTaskState.Enabled:
-                StartupChkBox.Checked = true;
-                break;
+                    StartupChkBox.Text += "\nDisabled in Task Manager";
+                    break;
+                case StartupTaskState.Enabled:
+                    StartupChkBox.Checked = true;
+                    break;
+            }
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"Error checking startup state: {ex.Message}");
+            // Disable checkbox if we can't determine state
+            StartupChkBox.Enabled = false;
         }
     }
 
@@ -205,17 +212,28 @@ public partial class SettingsForm : BaseForm {
     }
 
     private async void StartupChkBox_CheckedChanged(object sender, EventArgs e) {
-        StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
+        try {
+            StartupTask startupTask = await StartupTask.GetAsync("StartCaffeinated");
 
-        switch (StartupChkBox.Checked) {
-            case true:
-                StartupTaskState newState = await startupTask.RequestEnableAsync();
-                Debug.WriteLine("Request to enable startup, result = {0}", newState);
-                break;
-            case false:
-                startupTask.Disable();
-                Debug.WriteLine("Disabled startup task");
-                break;
+            switch (StartupChkBox.Checked) {
+                case true:
+                    StartupTaskState newState = await startupTask.RequestEnableAsync();
+                    Debug.WriteLine("Request to enable startup, result = {0}", newState);
+                    break;
+                case false:
+                    startupTask.Disable();
+                    Debug.WriteLine("Disabled startup task");
+                    break;
+            }
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"Error changing startup state: {ex.Message}");
+            MessageBox.Show(
+                $"Could not change startup setting: {ex.Message}",
+                "Caffeinated",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
         }
     }
 
