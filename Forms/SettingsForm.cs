@@ -20,9 +20,6 @@ public partial class SettingsForm : BaseForm {
         var durations = from i in appSettings.Durations
                         select new Duration { Minutes = i };
         this.Durations = new BindingList<Duration>(durations.ToList());
-        var defaultItem = this.Durations.Where(
-            d => d.Minutes == appSettings.DefaultDuration
-        ).FirstOrDefault();
 
         if (appSettings.ShowMessageOnLaunch)
             SettingsAtLaunchChkBox.Checked = true;
@@ -30,16 +27,7 @@ public partial class SettingsForm : BaseForm {
         if (appSettings.ActivateOnLaunch)
             ActivateChkBox.Checked = true;
 
-        DefaultDurationBox.DataSource = this.Durations;
-        DefaultDurationBox.DisplayMember = "Description";
-        DefaultDurationBox.ValueMember = "Minutes";
-        DefaultDurationBox.SelectedItem = defaultItem;
-
-        ToolStripMenuItem deleteMI = new("Delete Duration");
-        deleteMI.Click += DeleteMI_Click;
-        ContextMenuStrip durationCM = new();
-        durationCM.Items.Add(deleteMI);
-        DefaultDurationBox.ContextMenuStrip = durationCM;
+        SetupDurationsListView();
 
         setStartupCheckBox();
         setRadioButtons();
@@ -99,6 +87,9 @@ public partial class SettingsForm : BaseForm {
             pictureBox7.Image = Resources.Mug_Active_Black;
         }
         
+        // Update scrollable panel background
+        scrollablePanel.BackColor = BackColor;
+        
         // Update TableLayoutPanels background
         tableLayoutPanel1.BackColor = BackColor;
         tableLayoutPanel2.BackColor = BackColor;
@@ -107,6 +98,11 @@ public partial class SettingsForm : BaseForm {
         
         // Update picture boxes background
         pictureBox1.BackColor = BackColor;
+        
+        // Update ListView colors
+        DurationsListView.BackColor = BackColor;
+        DurationsListView.ForeColor = ForeColor;
+        DurationsListView.Invalidate();
         
         // Force refresh
         Refresh();
@@ -135,38 +131,135 @@ public partial class SettingsForm : BaseForm {
         }
     }
 
-    private void DeleteMI_Click(object? sender, EventArgs e) {
-        if (DefaultDurationBox.SelectedItem is not Duration durationToDelete)
+    private void SetupDurationsListView() {
+        DurationsListView.Columns.Add("Default", 60);
+        DurationsListView.Columns.Add("Duration", 200);
+        DurationsListView.Columns.Add("", 40);
+        
+        RefreshDurationsListView();
+    }
+
+    private void RefreshDurationsListView() {
+        DurationsListView.BeginUpdate();
+        DurationsListView.Items.Clear();
+        
+        var sortedDurations = Durations.OrderByDescending(d => d.Minutes).ToList();
+        
+        foreach (Duration duration in sortedDurations) {
+            ListViewItem item = new();
+            item.SubItems.Add(duration.Description);
+            item.SubItems.Add("🗑");
+            item.Tag = duration;
+            item.UseItemStyleForSubItems = false;
+            DurationsListView.Items.Add(item);
+        }
+        
+        int itemHeight = 30;
+        int headerHeight = 26;
+        int borderHeight = 4;
+        int totalHeight = headerHeight + (sortedDurations.Count * itemHeight) + borderHeight;
+        DurationsListView.Height = totalHeight;
+        DurationsListView.Width = 310;
+        
+        DurationsListView.EndUpdate();
+    }
+
+    private void DurationsListView_DrawColumnHeader(object? sender, DrawListViewColumnHeaderEventArgs e) {
+        e.Graphics.FillRectangle(new SolidBrush(BackColor), e.Bounds);
+        
+        TextRenderer.DrawText(
+            e.Graphics,
+            e.Header.Text,
+            DurationsListView.Font,
+            e.Bounds,
+            ForeColor,
+            TextFormatFlags.Left | TextFormatFlags.VerticalCenter
+        );
+    }
+
+    private void DurationsListView_DrawItem(object? sender, DrawListViewItemEventArgs e) {
+        e.DrawDefault = false;
+    }
+
+    private void DurationsListView_DrawSubItem(object? sender, DrawListViewSubItemEventArgs e) {
+        if (e.Item.Tag is not Duration duration)
             return;
 
-        DialogResult result = MessageBox.Show(
-                $"Delete {durationToDelete.Description}?",
+        e.Graphics.FillRectangle(
+            new SolidBrush(e.Item.Selected ? SystemColors.Highlight : BackColor),
+            e.Bounds
+        );
+
+        if (e.ColumnIndex == 0) {
+            bool isDefault = duration.Minutes == appSettings.DefaultDuration;
+            int centerX = e.Bounds.X + e.Bounds.Width / 2;
+            int centerY = e.Bounds.Y + e.Bounds.Height / 2;
+            int radioSize = 16;
+            
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            e.Graphics.DrawEllipse(
+                new Pen(ForeColor, 2),
+                centerX - radioSize / 2,
+                centerY - radioSize / 2,
+                radioSize,
+                radioSize
+            );
+            
+            if (isDefault) {
+                e.Graphics.FillEllipse(
+                    new SolidBrush(ForeColor),
+                    centerX - radioSize / 4,
+                    centerY - radioSize / 4,
+                    radioSize / 2,
+                    radioSize / 2
+                );
+            }
+        }
+        else if (e.ColumnIndex == 1) {
+            TextRenderer.DrawText(
+                e.Graphics,
+                e.SubItem.Text,
+                DurationsListView.Font,
+                e.Bounds,
+                e.Item.Selected ? SystemColors.HighlightText : ForeColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter
+            );
+        }
+        else if (e.ColumnIndex == 2) {
+            using Font emojiFont = new("Segoe UI Emoji", 11);
+            TextRenderer.DrawText(
+                e.Graphics,
+                "🗑️",
+                emojiFont,
+                e.Bounds,
+                e.Item.Selected ? SystemColors.HighlightText : ForeColor,
+                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
+            );
+        }
+    }
+
+    private void DurationsListView_MouseClick(object? sender, MouseEventArgs e) {
+        ListViewHitTestInfo hit = DurationsListView.HitTest(e.Location);
+        
+        if (hit.Item?.Tag is not Duration duration)
+            return;
+
+        if (hit.SubItem == hit.Item.SubItems[0]) {
+            appSettings.DefaultDuration = duration.Minutes;
+            DurationsListView.Invalidate();
+        }
+        else if (hit.SubItem == hit.Item.SubItems[2]) {
+            DialogResult result = MessageBox.Show(
+                $"Delete {duration.Description}?",
                 "Caffeinated",
                 MessageBoxButtons.YesNo
             );
 
-        switch (result) {
-            case DialogResult.None:
-                break;
-            case DialogResult.OK:
-                break;
-            case DialogResult.Cancel:
-                break;
-            case DialogResult.Abort:
-                break;
-            case DialogResult.Retry:
-                break;
-            case DialogResult.Ignore:
-                break;
-            case DialogResult.Yes:
-                Durations.Remove(durationToDelete);
-                appSettings.Durations.Remove(durationToDelete.Minutes);
-                // appSettings.Durations = appSettings.Durations;
-                break;
-            case DialogResult.No:
-                break;
-            default:
-                break;
+            if (result == DialogResult.Yes) {
+                Durations.Remove(duration);
+                appSettings.Durations.Remove(duration.Minutes);
+                RefreshDurationsListView();
+            }
         }
     }
 
@@ -207,11 +300,7 @@ public partial class SettingsForm : BaseForm {
         this.Close();
     }
 
-    private void DefaultDurationBox_SelectedIndexChanged(object sender,EventArgs e) {
-        if (DefaultDurationBox.SelectedItem is Duration item) {
-            appSettings.DefaultDuration = item.Minutes;
-        }
-    }
+
 
     private async void StartupChkBox_CheckedChanged(object sender, EventArgs e) {
         try {
@@ -295,6 +384,8 @@ public partial class SettingsForm : BaseForm {
             Durations.Add(item);
         }
         appSettings.Durations.Add(newDuration);
+        
+        RefreshDurationsListView();
 
         hoursTextBox.Text = "0";
         minutesTextBox.Text = "0";

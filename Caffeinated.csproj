@@ -13,6 +13,7 @@
     <Nullable>Enable</Nullable>
     <Platforms>AnyCPU;x86;x64;ARM64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
   </PropertyGroup>
 
   <ItemGroup>
