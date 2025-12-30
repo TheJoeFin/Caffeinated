@@ -52,7 +52,11 @@ namespace Caffeinated {
             pictureBox7 = new System.Windows.Forms.PictureBox();
             tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             CustomDurationLBL = new System.Windows.Forms.Label();
-            CustomDurationTXBX = new System.Windows.Forms.TextBox();
+            durationEntryFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
+            hoursTextBox = new System.Windows.Forms.TextBox();
+            hoursLabel = new System.Windows.Forms.Label();
+            minutesTextBox = new System.Windows.Forms.TextBox();
+            minutesLabel = new System.Windows.Forms.Label();
             addCustomDurationBTN = new System.Windows.Forms.Button();
             tableLayoutPanel5 = new System.Windows.Forms.TableLayoutPanel();
             tooltipFormatLBL = new System.Windows.Forms.Label();
@@ -70,6 +74,7 @@ namespace Caffeinated {
             ((System.ComponentModel.ISupportInitialize)pictureBox6).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox7).BeginInit();
             tableLayoutPanel4.SuspendLayout();
+            durationEntryFlowPanel.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
             // 
@@ -394,19 +399,19 @@ namespace Caffeinated {
             // 
             // tableLayoutPanel4
             // 
-            tableLayoutPanel4.ColumnCount = 3;
+            tableLayoutPanel4.ColumnCount = 2;
             tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 260F));
             tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
             tableLayoutPanel4.Controls.Add(CustomDurationLBL, 0, 0);
-            tableLayoutPanel4.Controls.Add(CustomDurationTXBX, 1, 0);
-            tableLayoutPanel4.Controls.Add(addCustomDurationBTN, 2, 0);
+            tableLayoutPanel4.Controls.Add(durationEntryFlowPanel, 1, 0);
+            tableLayoutPanel4.Controls.Add(addCustomDurationBTN, 1, 1);
             tableLayoutPanel4.Location = new System.Drawing.Point(4, 251);
             tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
-            tableLayoutPanel4.RowCount = 1;
+            tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayoutPanel4.Size = new System.Drawing.Size(508, 74);
+            tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanel4.Size = new System.Drawing.Size(508, 107);
             tableLayoutPanel4.TabIndex = 15;
             // 
             // CustomDurationLBL
@@ -416,21 +421,70 @@ namespace Caffeinated {
             CustomDurationLBL.Location = new System.Drawing.Point(4, 0);
             CustomDurationLBL.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             CustomDurationLBL.Name = "CustomDurationLBL";
-            CustomDurationLBL.Size = new System.Drawing.Size(252, 64);
+            tableLayoutPanel4.SetRowSpan(CustomDurationLBL, 2);
+            CustomDurationLBL.Size = new System.Drawing.Size(252, 32);
             CustomDurationLBL.TabIndex = 0;
-            CustomDurationLBL.Text = "Custom duration in minutes:";
+            CustomDurationLBL.Text = "Custom duration:";
             // 
-            // CustomDurationTXBX
+            // durationEntryFlowPanel
             // 
-            CustomDurationTXBX.Location = new System.Drawing.Point(264, 4);
-            CustomDurationTXBX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            CustomDurationTXBX.Name = "CustomDurationTXBX";
-            CustomDurationTXBX.Size = new System.Drawing.Size(117, 39);
-            CustomDurationTXBX.TabIndex = 1;
+            durationEntryFlowPanel.AutoSize = true;
+            durationEntryFlowPanel.Controls.Add(hoursTextBox);
+            durationEntryFlowPanel.Controls.Add(hoursLabel);
+            durationEntryFlowPanel.Controls.Add(minutesTextBox);
+            durationEntryFlowPanel.Controls.Add(minutesLabel);
+            durationEntryFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            durationEntryFlowPanel.Location = new System.Drawing.Point(264, 4);
+            durationEntryFlowPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            durationEntryFlowPanel.Name = "durationEntryFlowPanel";
+            durationEntryFlowPanel.Size = new System.Drawing.Size(136, 66);
+            durationEntryFlowPanel.TabIndex = 1;
+            durationEntryFlowPanel.WrapContents = false;
+            // 
+            // hoursTextBox
+            // 
+            hoursTextBox.Location = new System.Drawing.Point(0, 4);
+            hoursTextBox.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
+            hoursTextBox.Name = "hoursTextBox";
+            hoursTextBox.Size = new System.Drawing.Size(60, 39);
+            hoursTextBox.TabIndex = 0;
+            hoursTextBox.Text = "0";
+            // 
+            // hoursLabel
+            // 
+            hoursLabel.AutoSize = true;
+            hoursLabel.Location = new System.Drawing.Point(64, 0);
+            hoursLabel.Margin = new System.Windows.Forms.Padding(0, 0, 12, 0);
+            hoursLabel.Name = "hoursLabel";
+            hoursLabel.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
+            hoursLabel.Size = new System.Drawing.Size(24, 44);
+            hoursLabel.TabIndex = 1;
+            hoursLabel.Text = "h";
+            // 
+            // minutesTextBox
+            // 
+            minutesTextBox.Location = new System.Drawing.Point(100, 4);
+            minutesTextBox.Margin = new System.Windows.Forms.Padding(0, 4, 4, 4);
+            minutesTextBox.Name = "minutesTextBox";
+            minutesTextBox.Size = new System.Drawing.Size(60, 39);
+            minutesTextBox.TabIndex = 2;
+            minutesTextBox.Text = "0";
+            // 
+            // minutesLabel
+            // 
+            minutesLabel.AutoSize = true;
+            minutesLabel.Location = new System.Drawing.Point(164, 0);
+            minutesLabel.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+            minutesLabel.Name = "minutesLabel";
+            minutesLabel.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
+            minutesLabel.Size = new System.Drawing.Size(55, 44);
+            minutesLabel.TabIndex = 3;
+            minutesLabel.Text = "min";
             // 
             // addCustomDurationBTN
             // 
-            addCustomDurationBTN.Location = new System.Drawing.Point(408, 4);
+            addCustomDurationBTN.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            addCustomDurationBTN.Location = new System.Drawing.Point(264, 59);
             addCustomDurationBTN.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             addCustomDurationBTN.Name = "addCustomDurationBTN";
             addCustomDurationBTN.Size = new System.Drawing.Size(84, 40);
@@ -529,6 +583,8 @@ namespace Caffeinated {
             ((System.ComponentModel.ISupportInitialize)pictureBox7).EndInit();
             tableLayoutPanel4.ResumeLayout(false);
             tableLayoutPanel4.PerformLayout();
+            durationEntryFlowPanel.ResumeLayout(false);
+            durationEntryFlowPanel.PerformLayout();
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
@@ -562,7 +618,11 @@ namespace Caffeinated {
         private System.Windows.Forms.PictureBox pictureBox7;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Label CustomDurationLBL;
-        private System.Windows.Forms.TextBox CustomDurationTXBX;
+        private System.Windows.Forms.FlowLayoutPanel durationEntryFlowPanel;
+        private System.Windows.Forms.TextBox hoursTextBox;
+        private System.Windows.Forms.Label hoursLabel;
+        private System.Windows.Forms.TextBox minutesTextBox;
+        private System.Windows.Forms.Label minutesLabel;
         private System.Windows.Forms.Button addCustomDurationBTN;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
         private System.Windows.Forms.Label tooltipFormatLBL;

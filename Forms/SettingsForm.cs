@@ -65,6 +65,8 @@ public partial class SettingsForm : BaseForm {
         OnIconLbl.ForeColor = ForeColor;
         CustomDurationLBL.ForeColor = ForeColor;
         tooltipFormatLBL.ForeColor = ForeColor;
+        hoursLabel.ForeColor = ForeColor;
+        minutesLabel.ForeColor = ForeColor;
         
         // Update main icon based on theme - use light colored icons for dark mode
         pictureBox1.Image = IsDarkMode ? Resources.cup_coffee_icon_96 : Resources.Caffeine_Black_96;
@@ -238,15 +240,35 @@ public partial class SettingsForm : BaseForm {
     }
 
     private void addCustomDurationBTN_Click(object sender, EventArgs e) {
-        bool didParse = int.TryParse(CustomDurationTXBX.Text, out int newDuration);
+        bool hoursParsed = int.TryParse(hoursTextBox.Text, out int hours);
+        bool minutesParsed = int.TryParse(minutesTextBox.Text, out int minutes);
 
-        if (didParse == false)
+        if (!hoursParsed || !minutesParsed)
             return;
 
-        if ( newDuration < 0) {
-            CustomDurationTXBX.Text = "";
+        if (hours < 0 || minutes < 0) {
             MessageBox.Show(
-                "Enter a positive number.",
+                "Enter positive numbers.",
+                "Caffeinated",
+                MessageBoxButtons.OK
+            );
+            return;
+        }
+
+        if (minutes >= 60) {
+            MessageBox.Show(
+                "Minutes must be less than 60.",
+                "Caffeinated",
+                MessageBoxButtons.OK
+            );
+            return;
+        }
+
+        int newDuration = hours * 60 + minutes;
+
+        if (newDuration == 0) {
+            MessageBox.Show(
+                "Duration must be greater than 0.",
                 "Caffeinated",
                 MessageBoxButtons.OK
             );
@@ -254,9 +276,8 @@ public partial class SettingsForm : BaseForm {
         }
 
         if (appSettings.Durations.Contains(newDuration)) {
-            CustomDurationTXBX.Text = "";
             MessageBox.Show(
-                $"{newDuration} is already a duration.",
+                $"{newDuration} minutes is already a duration.",
                 "Caffeinated",
                 MessageBoxButtons.OK
             );
@@ -275,7 +296,8 @@ public partial class SettingsForm : BaseForm {
         }
         appSettings.Durations.Add(newDuration);
 
-        CustomDurationTXBX.Text = "";
+        hoursTextBox.Text = "0";
+        minutesTextBox.Text = "0";
     }
 
     private void defaultRDBTN_Click(object sender, EventArgs e) {
