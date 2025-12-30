@@ -34,6 +34,7 @@ public partial class AppContext : ApplicationContext {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.SetHighDpiMode(HighDpiMode.PerMonitorV2);
+        Application.SetColorMode(SystemColorMode.System);
         AppContext? context = new();
         if (context.notifyIcon == null) {
             Application.Exit();
