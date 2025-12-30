@@ -223,15 +223,52 @@ public partial class AppContext : ApplicationContext {
             return;
         }
 
-        ContextMenuStrip? contextMenu = new();
-
-        ToolStripMenuItem? exitItem = new("E&xit");
-        exitItem.Click += new(exitItem_Click);
+        ContextMenuStrip? contextMenu = new()
+        {
+            Renderer = new ModernMenuRenderer(isLightTheme),
+            ShowImageMargin = true,
+            Padding = new Padding(2)
+        };
 
         // If the user deleted all time settings, add 0 back in.
         if (appSettings.Durations.Count == 0) {
             appSettings.DefaultDuration = 0;
         }
+
+        ToolStripMenuItem? settingsItem = new("&Settings...")
+        {
+            Image = CreateSymbolImage("⚙", isLightTheme),
+            ImageScaling = ToolStripItemImageScaling.None,
+            Padding = new Padding(4, 6, 4, 6),
+            ImageAlign = ContentAlignment.MiddleLeft,
+            TextImageRelation = TextImageRelation.ImageBeforeText
+        };
+        settingsItem.Click += new(settingsItem_Click);
+        contextMenu.Items.Add(settingsItem);
+
+        ToolStripMenuItem? aboutItem = new("&About...")
+        {
+            Image = CreateSymbolImage("ℹ", isLightTheme),
+            ImageScaling = ToolStripItemImageScaling.None,
+            Padding = new Padding(4, 6, 4, 6),
+            ImageAlign = ContentAlignment.MiddleLeft,
+            TextImageRelation = TextImageRelation.ImageBeforeText
+        };
+        aboutItem.Click += new(aboutItem_Click);
+        contextMenu.Items.Add(aboutItem);
+
+        ToolStripMenuItem? exitItem = new("E&xit")
+        {
+            Image = CreateSymbolImage("✖", isLightTheme),
+            ImageScaling = ToolStripItemImageScaling.None,
+            Padding = new Padding(4, 6, 4, 6),
+            ImageAlign = ContentAlignment.MiddleLeft,
+            TextImageRelation = TextImageRelation.ImageBeforeText,
+        };
+        exitItem.Click += new(exitItem_Click);
+        contextMenu.Items.Add(exitItem);
+
+        contextMenu.Items.Add(new ToolStripSeparator());
 
         // we want the lower durations to be closer to the mouse. So, 
         ObservableCollection<int>? times = appSettings.Durations;
@@ -247,35 +284,45 @@ public partial class AppContext : ApplicationContext {
             }
         }
 
-        ToolStripMenuItem? settingsItem = new("&Settings...");
-        settingsItem.Click += new(settingsItem_Click);
-
-        ToolStripMenuItem? aboutItem = new("&About...");
-        aboutItem.Click += new(aboutItem_Click);
-
-        ContextMenuStrip? settingsMenuItem = new() {
-            Text = "Settings",
-        };
-
-        contextMenu.Items.AddRange(
-            [
-                settingsItem,
-                aboutItem,
-                exitItem
-            ]
-        );
-        contextMenu.Items.Add(new ToolStripSeparator());
-
         foreach (int time in sortedTimes) {
             ToolStripMenuItem? item = new(Duration.ToDescription(time))
             {
-                Tag = time
+                Tag = time,
+                Image = CreateSymbolImage("⏰", isLightTheme),
+                ImageScaling = ToolStripItemImageScaling.None,
+                Padding = new Padding(4, 6, 4, 6),
+                ImageAlign = ContentAlignment.MiddleLeft,
+                TextImageRelation = TextImageRelation.ImageBeforeText
             };
             item.Click += new(item_Click);
             contextMenu.Items.Add(item);
         }
 
         notifyIcon.ContextMenuStrip = contextMenu;
+    }
+
+    private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
+        int size = 16;
+        int padding = 2;
+        int totalSize = size + (padding * 2);
+        Bitmap bitmap = new(totalSize, totalSize);
+        using Graphics graphics = Graphics.FromImage(bitmap);
+        graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+        using Font font = new("Segoe UI Symbol", 10f, FontStyle.Regular);
+        Color textColor = isLightTheme ? Color.FromArgb(32, 32, 32) : Color.FromArgb(240, 240, 240);
+        using SolidBrush brush = new(textColor);
+
+        StringFormat format = new()
+        {
+            Alignment = StringAlignment.Center,
+            LineAlignment = StringAlignment.Center
+        };
+
+        graphics.DrawString(symbol, font, brush, new RectangleF(padding, padding, size, size), format);
+
+        return bitmap;
     }
 
     private void aboutItem_Click(object? sender, EventArgs e) {
@@ -429,11 +476,111 @@ public partial class AppContext : ApplicationContext {
         ExitThread();
     }
 
-    protected override void Dispose(bool disposing) {
-        if (disposing && components != null) {
-            components.Dispose();
+        protected override void Dispose(bool disposing) {
+            if (disposing && components != null) {
+                components.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
+    }
+
+    public class ModernMenuRenderer : ToolStripProfessionalRenderer {
+        private readonly bool isLightTheme;
+
+        public ModernMenuRenderer(bool isLightTheme) : base(new ModernColorTable(isLightTheme)) {
+            this.isLightTheme = isLightTheme;
+            RoundedEdges = false;
         }
 
-        base.Dispose(disposing);
+        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) {
+            if (e.Item.Selected) {
+                Rectangle rect = new(Point.Empty, e.Item.Size);
+                Color hoverColor = isLightTheme
+                    ? Color.FromArgb(240, 240, 240)
+                    : Color.FromArgb(50, 50, 50);
+
+                using SolidBrush brush = new(hoverColor);
+                e.Graphics.FillRectangle(brush, rect);
+
+                Color borderColor = isLightTheme
+                    ? Color.FromArgb(0, 120, 215)
+                    : Color.FromArgb(0, 120, 215);
+
+                using Pen pen = new(borderColor, 1);
+                Rectangle borderRect = rect;
+                borderRect.Width -= 1;
+                borderRect.Height -= 1;
+                e.Graphics.DrawRectangle(pen, borderRect);
+            }
+            else {
+                base.OnRenderMenuItemBackground(e);
+            }
+        }
+
+        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e) {
+            if (e.Item is ToolStripSeparator) {
+                base.OnRenderItemText(e);
+                return;
+            }
+
+            e.TextColor = isLightTheme
+                ? Color.FromArgb(32, 32, 32)
+                : Color.FromArgb(240, 240, 240);
+
+            e.TextFont = new Font(e.TextFont.FontFamily, e.TextFont.Size, FontStyle.Regular);
+
+            Rectangle adjustedRect = e.TextRectangle;
+            adjustedRect.Y += 3;
+            e.TextRectangle = adjustedRect;
+
+            base.OnRenderItemText(e);
+        }
+
+        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e) {
+            Rectangle rect = new(0, e.Item.Height / 2, e.Item.Width, 1);
+
+            Color separatorColor = isLightTheme
+                ? Color.FromArgb(220, 220, 220)
+                : Color.FromArgb(60, 60, 60);
+
+            using Pen pen = new(separatorColor);
+            e.Graphics.DrawLine(pen, rect.Left + 30, rect.Top, rect.Right - 5, rect.Top);
+        }
     }
-}
+
+    public class ModernColorTable : ProfessionalColorTable {
+        private readonly bool isLightTheme;
+
+        public ModernColorTable(bool isLightTheme) {
+            this.isLightTheme = isLightTheme;
+        }
+
+        public override Color MenuItemSelected => isLightTheme
+            ? Color.FromArgb(240, 240, 240)
+            : Color.FromArgb(50, 50, 50);
+
+        public override Color MenuItemSelectedGradientBegin => MenuItemSelected;
+
+        public override Color MenuItemSelectedGradientEnd => MenuItemSelected;
+
+        public override Color MenuBorder => isLightTheme
+            ? Color.FromArgb(204, 206, 219)
+            : Color.FromArgb(60, 60, 60);
+
+        public override Color MenuItemBorder => isLightTheme
+            ? Color.FromArgb(0, 120, 215)
+            : Color.FromArgb(0, 120, 215);
+
+        public override Color ImageMarginGradientBegin => isLightTheme
+            ? Color.FromArgb(250, 250, 250)
+            : Color.FromArgb(30, 30, 30);
+
+        public override Color ImageMarginGradientMiddle => ImageMarginGradientBegin;
+
+        public override Color ImageMarginGradientEnd => ImageMarginGradientBegin;
+
+        public override Color ToolStripDropDownBackground => isLightTheme
+            ? Color.FromArgb(255, 255, 255)
+            : Color.FromArgb(40, 40, 40);
+    }
