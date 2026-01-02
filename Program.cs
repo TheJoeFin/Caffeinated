@@ -392,21 +392,27 @@ public partial class AppContext : ApplicationContext {
     }
 
     private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
-        string cacheKey = $"{symbol}_{isLightTheme}";
+        using Graphics g = Graphics.FromHwnd(IntPtr.Zero);
+        float dpiScale = g.DpiX / 96f;
+        
+        int baseSize = 16;
+        int size = (int)(baseSize * dpiScale);
+        int padding = (int)(2 * dpiScale);
+        int totalSize = size + (padding * 2);
+
+        string cacheKey = $"{symbol}_{isLightTheme}_{dpiScale:F2}";
 
         if (symbolCache.TryGetValue(cacheKey, out Bitmap? cached)) {
             return cached;
         }
 
-        int size = 16;
-        int padding = 2;
-        int totalSize = size + (padding * 2);
         Bitmap bitmap = new(totalSize, totalSize);
         using Graphics graphics = Graphics.FromImage(bitmap);
         graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 
-        using Font font = new("Segoe UI Symbol", 10f, FontStyle.Regular);
+        float fontSize = 10f * dpiScale;
+        using Font font = new("Segoe UI Symbol", fontSize, FontStyle.Regular);
         Color textColor = isLightTheme ? Color.FromArgb(32, 32, 32) : Color.FromArgb(240, 240, 240);
         using SolidBrush brush = new(textColor);
 
@@ -524,7 +530,7 @@ public partial class AppContext : ApplicationContext {
             && timer != null) {
             timer.Interval = timerIntervalInMilliseconds;
             timer.Start();
-            endTime = DateTime.Now.AddMilliseconds(timerIntervalInMilliseconds);
+            endTime = DateTime.Now.AddMilliseconds(timerIntervalInMilliseconds).AddSeconds(1);
         }
         else {
             endTime = null;
@@ -563,22 +569,27 @@ public partial class AppContext : ApplicationContext {
             int minutes = remaining.Minutes;
             int seconds = remaining.Seconds;
 
-            string timeText;
-            if (hours > 0 && minutes > 0) {
-                timeText = $"{hours} hour{(hours != 1 ? "s" : "")} and {minutes} minute{(minutes != 1 ? "s" : "")}";
+            List<string> parts = new();
+            
+            if (hours > 0) {
+                parts.Add($"{hours} hour{(hours != 1 ? "s" : "")}");
             }
-            else if (hours > 0) {
-                timeText = $"{hours} hour{(hours != 1 ? "s" : "")}";
+            
+            if (minutes > 0) {
+                parts.Add($"{minutes} minute{(minutes != 1 ? "s" : "")}");
             }
-            else if (minutes >= 5) {
-                timeText = $"{minutes} minute{(minutes != 1 ? "s" : "")}";
+            
+            if (seconds > 0 && hours == 0 && minutes < 5) {
+                parts.Add($"{seconds} second{(seconds != 1 ? "s" : "")}");
             }
-            else if (minutes > 0) {
-                timeText = $"{minutes} minute{(minutes != 1 ? "s" : "")} and {seconds} second{(seconds != 1 ? "s" : "")}";
-            }
-            else {
-                timeText = $"less than {seconds} second{(seconds != 1 ? "s" : "")}";
-            }
+
+            string timeText = parts.Count switch
+            {
+                0 => "0 seconds",
+                1 => parts[0],
+                2 => $"{parts[0]} and {parts[1]}",
+                _ => string.Join(", ", parts.Take(parts.Count - 1)) + $", and {parts[^1]}"
+            };
 
             notifyIcon.Text = $"Caffeinated: No sleep for {timeText}";
         }
