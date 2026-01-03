@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Resources = Caffeinated.Properties.Resources;
 
 namespace Caffeinated;
 
