@@ -5,7 +5,6 @@
     <TargetFramework>net10.0-windows10.0.22621.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWinUI>true</UseWinUI>
     <RootNamespace>Caffeinated</RootNamespace>
     <AssemblyName>Caffeinated</AssemblyName>
     <StartupObject>Caffeinated.AppContext</StartupObject>

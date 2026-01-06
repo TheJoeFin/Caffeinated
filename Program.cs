@@ -1,5 +1,4 @@
 ﻿using Caffeinated.Helpers;
-using Caffeinated.Properties;
 using Humanizer;
 using Microsoft.Win32;
 using RegistryUtils;
@@ -31,7 +30,7 @@ public partial class AppContext : ApplicationContext {
     private readonly AppSettings? appSettings;
     private const string themeKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
     private readonly Lock iconLock = new();
-    private static readonly Dictionary<string, Bitmap> symbolCache = new();
+    private static readonly Dictionary<string, Bitmap> symbolCache = [];
     private readonly MessageWindow? messageWindow;
 
     private const int WM_QUERYENDSESSION = 0x0011;
@@ -180,8 +179,7 @@ public partial class AppContext : ApplicationContext {
         }
     }
 
-    private void UpdateTooltipTimer_Tick(object? sender, EventArgs e)
-    {
+    private void UpdateTooltipTimer_Tick(object? sender, EventArgs e) {
         if (notifyIcon is null)
             return;
 
@@ -236,8 +234,7 @@ public partial class AppContext : ApplicationContext {
             onIcon?.Dispose();
             offIcon?.Dispose();
 
-            switch (appSettings.Icon)
-            {
+            switch (appSettings.Icon) {
                 case TrayIcon.Mug:
                     if (isLightTheme) {
                         offIcon = new Icon(
@@ -314,8 +311,7 @@ public partial class AppContext : ApplicationContext {
             return;
         }
 
-        ContextMenuStrip? contextMenu = new()
-        {
+        ContextMenuStrip? contextMenu = new() {
             Renderer = new ModernMenuRenderer(isLightTheme),
             ShowImageMargin = true,
             Padding = new Padding(2)
@@ -326,8 +322,7 @@ public partial class AppContext : ApplicationContext {
             appSettings.DefaultDuration = 0;
         }
 
-        ToolStripMenuItem? settingsItem = new("&Settings...")
-        {
+        ToolStripMenuItem? settingsItem = new("&Settings...") {
             Image = CreateSymbolImage("⚙", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
             Padding = new Padding(4, 6, 4, 6),
@@ -337,8 +332,7 @@ public partial class AppContext : ApplicationContext {
         settingsItem.Click += new(settingsItem_Click);
         contextMenu.Items.Add(settingsItem);
 
-        ToolStripMenuItem? aboutItem = new("&About...")
-        {
+        ToolStripMenuItem? aboutItem = new("&About...") {
             Image = CreateSymbolImage("ℹ", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
             Padding = new Padding(4, 6, 4, 6),
@@ -348,8 +342,7 @@ public partial class AppContext : ApplicationContext {
         aboutItem.Click += new(aboutItem_Click);
         contextMenu.Items.Add(aboutItem);
 
-        ToolStripMenuItem? exitItem = new("E&xit")
-        {
+        ToolStripMenuItem? exitItem = new("E&xit") {
             Image = CreateSymbolImage("✖", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
             Padding = new Padding(4, 6, 4, 6),
@@ -376,8 +369,7 @@ public partial class AppContext : ApplicationContext {
         }
 
         foreach (int time in sortedTimes) {
-            ToolStripMenuItem? item = new(Duration.ToDescription(time))
-            {
+            ToolStripMenuItem? item = new(Duration.ToDescription(time)) {
                 Tag = time,
                 Image = CreateSymbolImage("⏰", isLightTheme),
                 ImageScaling = ToolStripItemImageScaling.None,
@@ -395,7 +387,7 @@ public partial class AppContext : ApplicationContext {
     private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
         using Graphics g = Graphics.FromHwnd(IntPtr.Zero);
         float dpiScale = g.DpiX / 96f;
-        
+
         int baseSize = 16;
         int size = (int)(baseSize * dpiScale);
         int padding = (int)(2 * dpiScale);
@@ -417,8 +409,7 @@ public partial class AppContext : ApplicationContext {
         Color textColor = isLightTheme ? Color.FromArgb(32, 32, 32) : Color.FromArgb(240, 240, 240);
         using SolidBrush brush = new(textColor);
 
-        StringFormat format = new()
-        {
+        StringFormat format = new() {
             Alignment = StringAlignment.Center,
             LineAlignment = StringAlignment.Center
         };
@@ -480,7 +471,7 @@ public partial class AppContext : ApplicationContext {
     }
 
     private void item_Click(object? sender, EventArgs e) {
-        if (sender is ToolStripMenuItem tsmi && tsmi.Tag is int time) {
+        if (sender is ToolStripMenuItem toolItem && toolItem.Tag is int time) {
             activate(time);
         }
     }
@@ -490,9 +481,9 @@ public partial class AppContext : ApplicationContext {
             return;
         }
 
-        bool? isactive = isActive();
+        bool? isActive = this.isActive();
 
-        if (isactive != null && isactive == true) {
+        if (isActive is not null and true) {
             deactivate();
         }
         else {
@@ -550,8 +541,7 @@ public partial class AppContext : ApplicationContext {
         if (notifyIcon is null)
             return;
 
-        if (notifyIcon.Icon == offIcon)
-        {
+        if (notifyIcon.Icon == offIcon) {
             notifyIcon.Text = "Caffeinated: sleep allowed";
             return;
         }
@@ -570,22 +560,21 @@ public partial class AppContext : ApplicationContext {
             int minutes = remaining.Minutes;
             int seconds = remaining.Seconds;
 
-            List<string> parts = new();
-            
+            List<string> parts = [];
+
             if (hours > 0) {
                 parts.Add($"{hours} hour{(hours != 1 ? "s" : "")}");
             }
-            
+
             if (minutes > 0) {
                 parts.Add($"{minutes} minute{(minutes != 1 ? "s" : "")}");
             }
-            
+
             if (seconds > 0 && hours == 0 && minutes < 5) {
                 parts.Add($"{seconds} second{(seconds != 1 ? "s" : "")}");
             }
 
-            string timeText = parts.Count switch
-            {
+            string timeText = parts.Count switch {
                 0 => "0 seconds",
                 1 => parts[0],
                 2 => $"{parts[0]} and {parts[1]}",
@@ -623,167 +612,26 @@ public partial class AppContext : ApplicationContext {
         ExitThread();
     }
 
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                // Unsubscribe from system events
-                SystemEvents.SessionEnding -= SystemEvents_SessionEnding;
+    protected override void Dispose(bool disposing) {
+        if (disposing) {
+            // Unsubscribe from system events
+            SystemEvents.SessionEnding -= SystemEvents_SessionEnding;
 
-                lock (iconLock) {
-                    onIcon?.Dispose();
-                    offIcon?.Dispose();
-                }
-
-                // Clear symbol cache
-                ClearSymbolCache();
-
-                timer?.Dispose();
-                updateTooltipTimer?.Dispose();
-                messageWindow?.Dispose();
-
-                components?.Dispose();
+            lock (iconLock) {
+                onIcon?.Dispose();
+                offIcon?.Dispose();
             }
 
-            base.Dispose(disposing);
+            // Clear symbol cache
+            ClearSymbolCache();
+
+            timer?.Dispose();
+            updateTooltipTimer?.Dispose();
+            messageWindow?.Dispose();
+
+            components?.Dispose();
         }
+
+        base.Dispose(disposing);
     }
-
-    // Hidden window to receive Windows messages for shutdown handling
-    internal class MessageWindow : Form {
-        private readonly AppContext appContext;
-
-        public MessageWindow(AppContext context) {
-            appContext = context;
-            // Create hidden window
-            ShowInTaskbar = false;
-            WindowState = FormWindowState.Minimized;
-            Opacity = 0;
-            Width = 0;
-            Height = 0;
-        }
-
-        protected override void WndProc(ref Message m) {
-            switch (m.Msg) {
-                case 0x0011: // WM_QUERYENDSESSION
-                    // Check if this is from Restart Manager
-                    if (m.LParam.ToInt32() == 0x1) { // ENDSESSION_CLOSEAPP
-                        // Return TRUE - we're ready to shutdown
-                        m.Result = new IntPtr(1);
-                        return;
-                    }
-                    break;
-
-                case 0x0016: // WM_ENDSESSION
-                    // Check if this is from Restart Manager and we should actually close
-                    if (m.LParam.ToInt32() == 0x1 && // ENDSESSION_CLOSEAPP
-                        m.WParam.ToInt32() != 0) {
-                        // Perform quick shutdown
-                        appContext.PerformGracefulShutdown();
-                        m.Result = IntPtr.Zero;
-                        return;
-                    }
-                    break;
-            }
-
-            base.WndProc(ref m);
-        }
-    }
-
-    public class ModernMenuRenderer : ToolStripProfessionalRenderer {
-        private readonly bool isLightTheme;
-
-        public ModernMenuRenderer(bool isLightTheme) : base(new ModernColorTable(isLightTheme)) {
-            this.isLightTheme = isLightTheme;
-            RoundedEdges = false;
-        }
-
-        protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e) {
-            if (e.Item.Selected) {
-                Rectangle rect = new(Point.Empty, e.Item.Size);
-                Color hoverColor = isLightTheme
-                    ? Color.FromArgb(240, 240, 240)
-                    : Color.FromArgb(50, 50, 50);
-
-                using SolidBrush brush = new(hoverColor);
-                e.Graphics.FillRectangle(brush, rect);
-
-                Color borderColor = isLightTheme
-                    ? Color.FromArgb(0, 120, 215)
-                    : Color.FromArgb(0, 120, 215);
-
-                using Pen pen = new(borderColor, 1);
-                Rectangle borderRect = rect;
-                borderRect.Width -= 1;
-                borderRect.Height -= 1;
-                e.Graphics.DrawRectangle(pen, borderRect);
-            }
-            else {
-                base.OnRenderMenuItemBackground(e);
-            }
-        }
-
-        protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e) {
-            if (e.Item is ToolStripSeparator) {
-                base.OnRenderItemText(e);
-                return;
-            }
-
-            e.TextColor = isLightTheme
-                ? Color.FromArgb(32, 32, 32)
-                : Color.FromArgb(240, 240, 240);
-
-            e.TextFont = new Font(e.TextFont.FontFamily, e.TextFont.Size, FontStyle.Regular);
-
-            Rectangle adjustedRect = e.TextRectangle;
-            adjustedRect.Y += 3;
-            e.TextRectangle = adjustedRect;
-
-            base.OnRenderItemText(e);
-        }
-
-        protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e) {
-            Rectangle rect = new(0, e.Item.Height / 2, e.Item.Width, 1);
-
-            Color separatorColor = isLightTheme
-                ? Color.FromArgb(220, 220, 220)
-                : Color.FromArgb(60, 60, 60);
-
-            using Pen pen = new(separatorColor);
-            e.Graphics.DrawLine(pen, rect.Left + 30, rect.Top, rect.Right - 5, rect.Top);
-        }
-    }
-
-    public class ModernColorTable : ProfessionalColorTable {
-        private readonly bool isLightTheme;
-
-        public ModernColorTable(bool isLightTheme) {
-            this.isLightTheme = isLightTheme;
-        }
-
-        public override Color MenuItemSelected => isLightTheme
-            ? Color.FromArgb(240, 240, 240)
-            : Color.FromArgb(50, 50, 50);
-
-        public override Color MenuItemSelectedGradientBegin => MenuItemSelected;
-
-        public override Color MenuItemSelectedGradientEnd => MenuItemSelected;
-
-        public override Color MenuBorder => isLightTheme
-            ? Color.FromArgb(204, 206, 219)
-            : Color.FromArgb(60, 60, 60);
-
-        public override Color MenuItemBorder => isLightTheme
-            ? Color.FromArgb(0, 120, 215)
-            : Color.FromArgb(0, 120, 215);
-
-        public override Color ImageMarginGradientBegin => isLightTheme
-            ? Color.FromArgb(250, 250, 250)
-            : Color.FromArgb(30, 30, 30);
-
-        public override Color ImageMarginGradientMiddle => ImageMarginGradientBegin;
-
-        public override Color ImageMarginGradientEnd => ImageMarginGradientBegin;
-
-        public override Color ToolStripDropDownBackground => isLightTheme
-            ? Color.FromArgb(255, 255, 255)
-            : Color.FromArgb(40, 40, 40);
-    }
+}
