@@ -63,6 +63,7 @@ namespace Caffeinated {
             specificTooltipRDBTN = new System.Windows.Forms.RadioButton();
             okBtn = new System.Windows.Forms.Button();
             cancelBtn = new System.Windows.Forms.Button();
+            exceptionLogBtn = new System.Windows.Forms.Button();
             tooltipProvider = new System.Windows.Forms.ToolTip(components);
             scrollablePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -559,6 +560,17 @@ namespace Caffeinated {
             cancelBtn.UseVisualStyleBackColor = false;
             cancelBtn.Click += cancelBtn_Click;
             // 
+            // exceptionLogBtn
+            // 
+            exceptionLogBtn.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            exceptionLogBtn.Location = new System.Drawing.Point(12, 721);
+            exceptionLogBtn.Name = "exceptionLogBtn";
+            exceptionLogBtn.Size = new System.Drawing.Size(120, 27);
+            exceptionLogBtn.TabIndex = 10;
+            exceptionLogBtn.Text = "Exception Log...";
+            exceptionLogBtn.UseVisualStyleBackColor = true;
+            exceptionLogBtn.Click += exceptionLogBtn_Click;
+            // 
             // SettingsForm
             // 
             AcceptButton = okBtn;
@@ -566,6 +578,7 @@ namespace Caffeinated {
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = cancelBtn;
             ClientSize = new System.Drawing.Size(545, 756);
+            Controls.Add(exceptionLogBtn);
             Controls.Add(cancelBtn);
             Controls.Add(okBtn);
             Controls.Add(scrollablePanel);
@@ -639,5 +652,6 @@ namespace Caffeinated {
         private System.Windows.Forms.RadioButton generalTooltipRDBTN;
         private System.Windows.Forms.RadioButton specificTooltipRDBTN;
         private System.Windows.Forms.ToolTip tooltipProvider;
+        private System.Windows.Forms.Button exceptionLogBtn;
     }
 }

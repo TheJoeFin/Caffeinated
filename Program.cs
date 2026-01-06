@@ -67,17 +67,14 @@ public partial class AppContext : ApplicationContext {
 
     private static void Application_ThreadException(object? sender, ThreadExceptionEventArgs e) {
         Debug.WriteLine($"UI Thread Exception: {e.Exception}");
-        MessageBox.Show(
-            $"An error occurred: {e.Exception.Message}\n\nThe application will continue running.",
-            "Caffeinated - Error",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error
-        );
+        ExceptionLogService.LogException(e.Exception);
     }
 
     private static void CurrentDomain_UnhandledException(object? sender, UnhandledExceptionEventArgs e) {
         Debug.WriteLine($"Unhandled Exception: {e.ExceptionObject}");
-        // Log to file or event log in production
+        if (e.ExceptionObject is Exception exception) {
+            ExceptionLogService.LogException(exception);
+        }
     }
 
     internal void PerformGracefulShutdown() {

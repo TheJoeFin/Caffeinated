@@ -418,4 +418,11 @@ public partial class SettingsForm : BaseForm {
     private void specificTooltipRDBTN_Click(object sender, EventArgs e) {
         appSettings.TooltipFormat = TooltipFormat.Specific;
     }
+
+    private void exceptionLogBtn_Click(object? sender, EventArgs e) {
+        if (Application.OpenForms.OfType<ExceptionLogForm>().Any() == false) {
+            var exceptionLogForm = new ExceptionLogForm();
+            exceptionLogForm.Show();
+        }
+    }
 }
