@@ -319,10 +319,12 @@ public partial class AppContext : ApplicationContext {
             appSettings.DefaultDuration = 0;
         }
 
+        Padding itemPadding = new(6, 14, 6, 6);
+
         ToolStripMenuItem? settingsItem = new("&Settings...") {
             Image = CreateSymbolImage("⚙", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
-            Padding = new Padding(4, 6, 4, 6),
+            Padding = itemPadding,
             ImageAlign = ContentAlignment.MiddleLeft,
             TextImageRelation = TextImageRelation.ImageBeforeText
         };
@@ -332,7 +334,7 @@ public partial class AppContext : ApplicationContext {
         ToolStripMenuItem? aboutItem = new("&About...") {
             Image = CreateSymbolImage("ℹ", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
-            Padding = new Padding(4, 6, 4, 6),
+            Padding = itemPadding,
             ImageAlign = ContentAlignment.MiddleLeft,
             TextImageRelation = TextImageRelation.ImageBeforeText
         };
@@ -342,7 +344,7 @@ public partial class AppContext : ApplicationContext {
         ToolStripMenuItem? exitItem = new("E&xit") {
             Image = CreateSymbolImage("✖", isLightTheme),
             ImageScaling = ToolStripItemImageScaling.None,
-            Padding = new Padding(4, 6, 4, 6),
+            Padding = itemPadding,
             ImageAlign = ContentAlignment.MiddleLeft,
             TextImageRelation = TextImageRelation.ImageBeforeText,
         };
@@ -370,7 +372,7 @@ public partial class AppContext : ApplicationContext {
                 Tag = time,
                 Image = CreateSymbolImage("⏰", isLightTheme),
                 ImageScaling = ToolStripItemImageScaling.None,
-                Padding = new Padding(4, 6, 4, 6),
+                Padding = itemPadding,
                 ImageAlign = ContentAlignment.MiddleLeft,
                 TextImageRelation = TextImageRelation.ImageBeforeText
             };
@@ -382,27 +384,19 @@ public partial class AppContext : ApplicationContext {
     }
 
     private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
-        using Graphics g = Graphics.FromHwnd(IntPtr.Zero);
-        float dpiScale = g.DpiX / 96f;
-
-        int baseSize = 16;
-        int size = (int)(baseSize * dpiScale);
-        int padding = (int)(2 * dpiScale);
-        int totalSize = size + (padding * 2);
-
-        string cacheKey = $"{symbol}_{isLightTheme}_{dpiScale:F2}";
+        int size = 24;
+        string cacheKey = $"{symbol}_{isLightTheme}";
 
         if (symbolCache.TryGetValue(cacheKey, out Bitmap? cached)) {
             return cached;
         }
 
-        Bitmap bitmap = new(totalSize, totalSize);
+        Bitmap bitmap = new(size, size);
         using Graphics graphics = Graphics.FromImage(bitmap);
         graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-        float fontSize = 10f * dpiScale;
-        using Font font = new("Segoe UI Symbol", fontSize, FontStyle.Regular);
+        using Font font = new("Segoe UI Symbol", 11f, FontStyle.Regular);
         Color textColor = isLightTheme ? Color.FromArgb(32, 32, 32) : Color.FromArgb(240, 240, 240);
         using SolidBrush brush = new(textColor);
 
@@ -411,7 +405,7 @@ public partial class AppContext : ApplicationContext {
             LineAlignment = StringAlignment.Center
         };
 
-        graphics.DrawString(symbol, font, brush, new RectangleF(padding, padding, size, size), format);
+        graphics.DrawString(symbol, font, brush, new RectangleF(0, 0, size, size), format);
 
         symbolCache[cacheKey] = bitmap;
 

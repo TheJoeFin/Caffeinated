@@ -46,10 +46,11 @@ public class ModernMenuRenderer : ToolStripProfessionalRenderer {
             ? Color.FromArgb(32, 32, 32)
             : Color.FromArgb(240, 240, 240);
 
-        e.TextFont = new Font(e.TextFont.FontFamily, e.TextFont.Size, FontStyle.Regular);
+        e.TextFont = new Font("Segoe UI", 10.5f, FontStyle.Regular);
 
         Rectangle adjustedRect = e.TextRectangle;
-        adjustedRect.Y += 3;
+        adjustedRect.Y += 4;
+        adjustedRect.Height += 4;
         e.TextRectangle = adjustedRect;
 
         base.OnRenderItemText(e);
