@@ -22,8 +22,7 @@ namespace Caffeinated {
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
             scrollablePanel = new System.Windows.Forms.Panel();
@@ -91,7 +90,7 @@ namespace Caffeinated {
             scrollablePanel.Controls.Add(tableLayoutPanel1);
             scrollablePanel.Location = new System.Drawing.Point(0, 0);
             scrollablePanel.Name = "scrollablePanel";
-            scrollablePanel.Size = new System.Drawing.Size(545, 685);
+            scrollablePanel.Size = new System.Drawing.Size(545, 390);
             scrollablePanel.TabIndex = 0;
             // 
             // label1
@@ -122,7 +121,7 @@ namespace Caffeinated {
             // 
             // tableLayoutPanel1
             // 
-            tableLayoutPanel1.AutoScroll = true;
+            tableLayoutPanel1.AutoScroll = false;
             tableLayoutPanel1.AutoSize = true;
             tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             tableLayoutPanel1.ColumnCount = 1;
@@ -135,7 +134,7 @@ namespace Caffeinated {
             tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 6);
             tableLayoutPanel1.Controls.Add(tableLayoutPanel5, 0, 3);
             tableLayoutPanel1.Location = new System.Drawing.Point(130, 134);
-            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 8;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -158,12 +157,11 @@ namespace Caffeinated {
             tableLayoutPanel2.Controls.Add(label3, 0, 0);
             tableLayoutPanel2.Controls.Add(DurationsListView, 0, 1);
             tableLayoutPanel2.Location = new System.Drawing.Point(2, 119);
-            tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayoutPanel2.Size = new System.Drawing.Size(174, 96);
             tableLayoutPanel2.TabIndex = 13;
             // 
             // label3
@@ -184,7 +182,7 @@ namespace Caffeinated {
             DurationsListView.Name = "DurationsListView";
             DurationsListView.OwnerDraw = true;
             DurationsListView.Scrollable = false;
-            DurationsListView.Size = new System.Drawing.Size(168, 75);
+            DurationsListView.Size = new System.Drawing.Size(200, 75);
             DurationsListView.TabIndex = 8;
             DurationsListView.UseCompatibleStateImageBehavior = false;
             DurationsListView.View = System.Windows.Forms.View.Details;
@@ -244,7 +242,7 @@ namespace Caffeinated {
             tableLayoutPanel3.Controls.Add(pictureBox6, 1, 3);
             tableLayoutPanel3.Controls.Add(pictureBox7, 2, 3);
             tableLayoutPanel3.Location = new System.Drawing.Point(2, 273);
-            tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 4;
             tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -278,7 +276,7 @@ namespace Caffeinated {
             // 
             defaultRDBTN.AutoSize = true;
             defaultRDBTN.Location = new System.Drawing.Point(2, 17);
-            defaultRDBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            defaultRDBTN.Margin = new System.Windows.Forms.Padding(2);
             defaultRDBTN.Name = "defaultRDBTN";
             defaultRDBTN.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             defaultRDBTN.Size = new System.Drawing.Size(63, 34);
@@ -293,7 +291,7 @@ namespace Caffeinated {
             // 
             eyeZZZRDBTN.AutoSize = true;
             eyeZZZRDBTN.Location = new System.Drawing.Point(2, 83);
-            eyeZZZRDBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            eyeZZZRDBTN.Margin = new System.Windows.Forms.Padding(2);
             eyeZZZRDBTN.Name = "eyeZZZRDBTN";
             eyeZZZRDBTN.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             eyeZZZRDBTN.Size = new System.Drawing.Size(91, 34);
@@ -307,7 +305,7 @@ namespace Caffeinated {
             // 
             mugRDBTN.AutoSize = true;
             mugRDBTN.Location = new System.Drawing.Point(2, 149);
-            mugRDBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            mugRDBTN.Margin = new System.Windows.Forms.Padding(2);
             mugRDBTN.Name = "mugRDBTN";
             mugRDBTN.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             mugRDBTN.Size = new System.Drawing.Size(50, 34);
@@ -393,7 +391,7 @@ namespace Caffeinated {
             tableLayoutPanel4.Controls.Add(durationEntryFlowPanel, 1, 0);
             tableLayoutPanel4.Controls.Add(addCustomDurationBTN, 1, 1);
             tableLayoutPanel4.Location = new System.Drawing.Point(2, 219);
-            tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -422,7 +420,7 @@ namespace Caffeinated {
             durationEntryFlowPanel.Controls.Add(minutesLabel);
             durationEntryFlowPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             durationEntryFlowPanel.Location = new System.Drawing.Point(142, 2);
-            durationEntryFlowPanel.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            durationEntryFlowPanel.Margin = new System.Windows.Forms.Padding(2);
             durationEntryFlowPanel.Name = "durationEntryFlowPanel";
             durationEntryFlowPanel.Size = new System.Drawing.Size(130, 27);
             durationEntryFlowPanel.TabIndex = 1;
@@ -472,7 +470,7 @@ namespace Caffeinated {
             // 
             addCustomDurationBTN.Anchor = System.Windows.Forms.AnchorStyles.Left;
             addCustomDurationBTN.Location = new System.Drawing.Point(142, 33);
-            addCustomDurationBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            addCustomDurationBTN.Margin = new System.Windows.Forms.Padding(2);
             addCustomDurationBTN.Name = "addCustomDurationBTN";
             addCustomDurationBTN.Size = new System.Drawing.Size(46, 19);
             addCustomDurationBTN.TabIndex = 2;
@@ -490,7 +488,7 @@ namespace Caffeinated {
             tableLayoutPanel5.Controls.Add(generalTooltipRDBTN, 1, 0);
             tableLayoutPanel5.Controls.Add(specificTooltipRDBTN, 2, 0);
             tableLayoutPanel5.Location = new System.Drawing.Point(2, 77);
-            tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            tableLayoutPanel5.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 1;
             tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -511,7 +509,7 @@ namespace Caffeinated {
             // 
             generalTooltipRDBTN.AutoSize = true;
             generalTooltipRDBTN.Location = new System.Drawing.Point(107, 2);
-            generalTooltipRDBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            generalTooltipRDBTN.Margin = new System.Windows.Forms.Padding(2);
             generalTooltipRDBTN.Name = "generalTooltipRDBTN";
             generalTooltipRDBTN.Size = new System.Drawing.Size(65, 19);
             generalTooltipRDBTN.TabIndex = 1;
@@ -525,7 +523,7 @@ namespace Caffeinated {
             // 
             specificTooltipRDBTN.AutoSize = true;
             specificTooltipRDBTN.Location = new System.Drawing.Point(176, 2);
-            specificTooltipRDBTN.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            specificTooltipRDBTN.Margin = new System.Windows.Forms.Padding(2);
             specificTooltipRDBTN.Name = "specificTooltipRDBTN";
             specificTooltipRDBTN.Size = new System.Drawing.Size(66, 19);
             specificTooltipRDBTN.TabIndex = 2;
@@ -539,7 +537,7 @@ namespace Caffeinated {
             // 
             okBtn.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             okBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            okBtn.Location = new System.Drawing.Point(351, 721);
+            okBtn.Location = new System.Drawing.Point(351, 426);
             okBtn.Name = "okBtn";
             okBtn.Size = new System.Drawing.Size(87, 27);
             okBtn.TabIndex = 8;
@@ -552,7 +550,7 @@ namespace Caffeinated {
             cancelBtn.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             cancelBtn.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            cancelBtn.Location = new System.Drawing.Point(444, 721);
+            cancelBtn.Location = new System.Drawing.Point(444, 426);
             cancelBtn.Name = "cancelBtn";
             cancelBtn.Size = new System.Drawing.Size(87, 27);
             cancelBtn.TabIndex = 9;
@@ -563,7 +561,7 @@ namespace Caffeinated {
             // exceptionLogBtn
             // 
             exceptionLogBtn.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            exceptionLogBtn.Location = new System.Drawing.Point(12, 721);
+            exceptionLogBtn.Location = new System.Drawing.Point(12, 426);
             exceptionLogBtn.Name = "exceptionLogBtn";
             exceptionLogBtn.Size = new System.Drawing.Size(120, 27);
             exceptionLogBtn.TabIndex = 10;
@@ -577,7 +575,7 @@ namespace Caffeinated {
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = cancelBtn;
-            ClientSize = new System.Drawing.Size(545, 756);
+            ClientSize = new System.Drawing.Size(545, 461);
             Controls.Add(exceptionLogBtn);
             Controls.Add(cancelBtn);
             Controls.Add(okBtn);
@@ -609,7 +607,6 @@ namespace Caffeinated {
             tableLayoutPanel5.ResumeLayout(false);
             tableLayoutPanel5.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion

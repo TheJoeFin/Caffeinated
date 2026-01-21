@@ -422,6 +422,7 @@ public partial class AppContext : ApplicationContext {
     private void aboutItem_Click(object? sender, EventArgs e) {
         if (Application.OpenForms.OfType<AboutForm>().Any() == false) {
             aboutForm = new();
+            aboutForm.PositionNearTrayIcon(notifyIcon);
             aboutForm.Show();
         }
     }
@@ -438,6 +439,7 @@ public partial class AppContext : ApplicationContext {
         }
 
         settingsForm = new(appSettings);
+        settingsForm.PositionNearTrayIcon(notifyIcon);
         settingsForm.FormClosing += SettingsForm_FormClosing;
         settingsForm.Show();
     }

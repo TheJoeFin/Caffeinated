@@ -99,10 +99,24 @@ public partial class SettingsForm : BaseForm {
         // Update picture boxes background
         pictureBox1.BackColor = BackColor;
         
-        // Update ListView colors
-        DurationsListView.BackColor = BackColor;
-        DurationsListView.ForeColor = ForeColor;
-        DurationsListView.Invalidate();
+        // Update durations table colors
+        if (durationsTable != null) {
+            durationsTable.BackColor = BackColor;
+            foreach (Control control in durationsTable.Controls) {
+                if (control is Label label) {
+                    label.ForeColor = ForeColor;
+                    label.BackColor = BackColor;
+                }
+                else if (control is Button button) {
+                    button.ForeColor = ForeColor;
+                    button.BackColor = BackColor;
+                }
+                else if (control is RadioButton radio) {
+                    radio.ForeColor = ForeColor;
+                    radio.BackColor = BackColor;
+                }
+            }
+        }
         
         // Force refresh
         Refresh();
@@ -131,124 +145,154 @@ public partial class SettingsForm : BaseForm {
         }
     }
 
+    private TableLayoutPanel? durationsTable;
+
     private void SetupDurationsListView() {
-        DurationsListView.Columns.Add("Default", 60);
-        DurationsListView.Columns.Add("Duration", 200);
-        DurationsListView.Columns.Add("", 40);
+        // Hide the old ListView
+        DurationsListView.Visible = false;
+        
+        // Create new TableLayoutPanel for durations
+        durationsTable = new TableLayoutPanel {
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            ColumnCount = 3,
+            Location = DurationsListView.Location,
+            Name = "durationsTable",
+            Padding = new Padding(0),
+            Margin = new Padding(0),
+            RowCount = 0,
+            AutoScroll = false,  // CRITICAL: No scrolling on inner table
+            Dock = DockStyle.None,  // Don't dock, let it auto-size
+            Anchor = AnchorStyles.Top | AnchorStyles.Left  // Anchor to top-left
+        };
+        
+        durationsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        durationsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        durationsTable.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+        
+        // Add header row
+        Label headerDefault = new() {
+            Text = "Default",
+            AutoSize = true,
+            Font = new Font(Font, FontStyle.Bold),
+            Padding = new Padding(5),
+            Margin = new Padding(0)
+        };
+        
+        Label headerDuration = new() {
+            Text = "Duration",
+            AutoSize = true,
+            Font = new Font(Font, FontStyle.Bold),
+            Padding = new Padding(5),
+            Margin = new Padding(0)
+        };
+        
+        Label headerDelete = new() {
+            Text = "",
+            AutoSize = true,
+            Font = new Font(Font, FontStyle.Bold),
+            Padding = new Padding(5),
+            Margin = new Padding(0)
+        };
+        
+        durationsTable.Controls.Add(headerDefault, 0, 0);
+        durationsTable.Controls.Add(headerDuration, 1, 0);
+        durationsTable.Controls.Add(headerDelete, 2, 0);
+        durationsTable.RowCount = 1;
+        durationsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        
+        // Add to parent container
+        Control? parent = DurationsListView.Parent;
+        if (parent != null) {
+            parent.Controls.Add(durationsTable);
+        }
         
         RefreshDurationsListView();
     }
 
     private void RefreshDurationsListView() {
-        DurationsListView.BeginUpdate();
-        DurationsListView.Items.Clear();
+        if (durationsTable == null)
+            return;
+            
+        durationsTable.SuspendLayout();
+        
+        // Remove all rows except header
+        while (durationsTable.RowCount > 1) {
+            for (int col = 0; col < durationsTable.ColumnCount; col++) {
+                Control? control = durationsTable.GetControlFromPosition(col, durationsTable.RowCount - 1);
+                if (control != null) {
+                    durationsTable.Controls.Remove(control);
+                    control.Dispose();
+                }
+            }
+            durationsTable.RowCount--;
+            durationsTable.RowStyles.RemoveAt(durationsTable.RowStyles.Count - 1);
+        }
         
         var sortedDurations = Durations.OrderByDescending(d => d.Minutes).ToList();
         
+        int row = 1;
         foreach (Duration duration in sortedDurations) {
-            ListViewItem item = new();
-            item.SubItems.Add(duration.Description);
-            item.SubItems.Add("🗑");
-            item.Tag = duration;
-            item.UseItemStyleForSubItems = false;
-            DurationsListView.Items.Add(item);
+            // Radio button for default
+            RadioButton radioBtn = new() {
+                AutoSize = true,
+                Checked = duration.Minutes == appSettings.DefaultDuration,
+                Tag = duration,
+                Margin = new Padding(5),
+                Text = ""
+            };
+            radioBtn.CheckedChanged += DurationRadio_CheckedChanged;
+            
+            // Duration label
+            Label durationLabel = new() {
+                Text = duration.Description,
+                AutoSize = true,
+                Padding = new Padding(5),
+                Margin = new Padding(0),
+                Anchor = AnchorStyles.Left
+            };
+            
+            // Delete button
+            Button deleteBtn = new() {
+                Text = "🗑",
+                AutoSize = true,
+                Tag = duration,
+                Margin = new Padding(5),
+                FlatStyle = FlatStyle.Flat,
+                Cursor = Cursors.Hand
+            };
+            deleteBtn.FlatAppearance.BorderSize = 0;
+            deleteBtn.Click += DeleteDuration_Click;
+            
+            durationsTable.Controls.Add(radioBtn, 0, row);
+            durationsTable.Controls.Add(durationLabel, 1, row);
+            durationsTable.Controls.Add(deleteBtn, 2, row);
+            
+            durationsTable.RowCount++;
+            durationsTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            row++;
         }
         
-        int itemHeight = 30;
-        int headerHeight = 26;
-        int borderHeight = 4;
-        int totalHeight = headerHeight + (sortedDurations.Count * itemHeight) + borderHeight;
-        DurationsListView.Height = totalHeight;
-        DurationsListView.Width = 310;
-        
-        DurationsListView.EndUpdate();
+        durationsTable.ResumeLayout();
     }
 
-    private void DurationsListView_DrawColumnHeader(object? sender, DrawListViewColumnHeaderEventArgs e) {
-        e.Graphics.FillRectangle(new SolidBrush(BackColor), e.Bounds);
-        
-        TextRenderer.DrawText(
-            e.Graphics,
-            e.Header.Text,
-            DurationsListView.Font,
-            e.Bounds,
-            ForeColor,
-            TextFormatFlags.Left | TextFormatFlags.VerticalCenter
-        );
-    }
-
-    private void DurationsListView_DrawItem(object? sender, DrawListViewItemEventArgs e) {
-        e.DrawDefault = false;
-    }
-
-    private void DurationsListView_DrawSubItem(object? sender, DrawListViewSubItemEventArgs e) {
-        if (e.Item.Tag is not Duration duration)
-            return;
-
-        e.Graphics.FillRectangle(
-            new SolidBrush(e.Item.Selected ? SystemColors.Highlight : BackColor),
-            e.Bounds
-        );
-
-        if (e.ColumnIndex == 0) {
-            bool isDefault = duration.Minutes == appSettings.DefaultDuration;
-            int centerX = e.Bounds.X + e.Bounds.Width / 2;
-            int centerY = e.Bounds.Y + e.Bounds.Height / 2;
-            int radioSize = 16;
+    private void DurationRadio_CheckedChanged(object? sender, EventArgs e) {
+        if (sender is RadioButton radio && radio.Checked && radio.Tag is Duration duration) {
+            appSettings.DefaultDuration = duration.Minutes;
             
-            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            e.Graphics.DrawEllipse(
-                new Pen(ForeColor, 2),
-                centerX - radioSize / 2,
-                centerY - radioSize / 2,
-                radioSize,
-                radioSize
-            );
-            
-            if (isDefault) {
-                e.Graphics.FillEllipse(
-                    new SolidBrush(ForeColor),
-                    centerX - radioSize / 4,
-                    centerY - radioSize / 4,
-                    radioSize / 2,
-                    radioSize / 2
-                );
+            // Uncheck all other radio buttons
+            if (durationsTable != null) {
+                foreach (Control control in durationsTable.Controls) {
+                    if (control is RadioButton otherRadio && otherRadio != radio) {
+                        otherRadio.Checked = false;
+                    }
+                }
             }
         }
-        else if (e.ColumnIndex == 1) {
-            TextRenderer.DrawText(
-                e.Graphics,
-                e.SubItem.Text,
-                DurationsListView.Font,
-                e.Bounds,
-                e.Item.Selected ? SystemColors.HighlightText : ForeColor,
-                TextFormatFlags.Left | TextFormatFlags.VerticalCenter
-            );
-        }
-        else if (e.ColumnIndex == 2) {
-            using Font emojiFont = new("Segoe UI Emoji", 11);
-            TextRenderer.DrawText(
-                e.Graphics,
-                "🗑️",
-                emojiFont,
-                e.Bounds,
-                e.Item.Selected ? SystemColors.HighlightText : ForeColor,
-                TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter
-            );
-        }
     }
 
-    private void DurationsListView_MouseClick(object? sender, MouseEventArgs e) {
-        ListViewHitTestInfo hit = DurationsListView.HitTest(e.Location);
-        
-        if (hit.Item?.Tag is not Duration duration)
-            return;
-
-        if (hit.SubItem == hit.Item.SubItems[0]) {
-            appSettings.DefaultDuration = duration.Minutes;
-            DurationsListView.Invalidate();
-        }
-        else if (hit.SubItem == hit.Item.SubItems[2]) {
+    private void DeleteDuration_Click(object? sender, EventArgs e) {
+        if (sender is Button button && button.Tag is Duration duration) {
             DialogResult result = MessageBox.Show(
                 $"Delete {duration.Description}?",
                 "Caffeinated",
@@ -261,6 +305,23 @@ public partial class SettingsForm : BaseForm {
                 RefreshDurationsListView();
             }
         }
+    }
+
+    private void DurationsListView_DrawColumnHeader(object? sender, DrawListViewColumnHeaderEventArgs e) {
+        // No longer needed
+    }
+
+    private void DurationsListView_DrawItem(object? sender, DrawListViewItemEventArgs e) {
+        // No longer needed
+    }
+
+    private void DurationsListView_DrawSubItem(object? sender, DrawListViewSubItemEventArgs e) {
+        // No longer needed
+    }
+
+
+    private void DurationsListView_MouseClick(object? sender, MouseEventArgs e) {
+        // No longer needed
     }
 
     private async void setStartupCheckBox() {
