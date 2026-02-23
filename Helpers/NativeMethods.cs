@@ -33,6 +33,15 @@ internal static class NativeMethods {
         [In] ref NOTIFYICONIDENTIFIER identifier,
         [Out] out RECT iconLocation);
 
+    [DllImport("user32.dll")]
+    public static extern uint GetDpiForWindow(nint hwnd);
+
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetricsForDpi(int nIndex, uint dpi);
+
+    public const int SM_CXSMICON = 49;
+    public const int SM_CYSMICON = 50;
+
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT {
         public int left;

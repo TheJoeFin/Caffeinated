@@ -32,6 +32,7 @@ public partial class AppContext : ApplicationContext {
     private readonly Lock iconLock = new();
     private static readonly Dictionary<string, Bitmap> symbolCache = [];
     private readonly MessageWindow? messageWindow;
+    private uint cachedTaskbarDpi;
 
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_ENDSESSION = 0x0016;
@@ -117,6 +118,51 @@ public partial class AppContext : ApplicationContext {
         PerformGracefulShutdown();
     }
 
+    private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e) {
+        uint newDpi = GetTaskbarDpi();
+        if (newDpi != cachedTaskbarDpi) {
+            cachedTaskbarDpi = newDpi;
+            ClearSymbolCache();
+            setIcons();
+            setContextMenu();
+            if (notifyIcon != null) {
+                notifyIcon.Icon = isActivated ? onIcon : offIcon;
+            }
+        }
+    }
+
+    internal void OnDpiChanged() {
+        uint newDpi = GetTaskbarDpi();
+        if (newDpi != cachedTaskbarDpi) {
+            cachedTaskbarDpi = newDpi;
+            ClearSymbolCache();
+            setIcons();
+            setContextMenu();
+            if (notifyIcon != null) {
+                notifyIcon.Icon = isActivated ? onIcon : offIcon;
+            }
+        }
+    }
+
+    private static uint GetTaskbarDpi() {
+        nint taskbarHandle = User32.FindWindow("Shell_TrayWnd", string.Empty);
+        if (taskbarHandle != 0) {
+            uint dpi = NativeMethods.GetDpiForWindow(taskbarHandle);
+            if (dpi > 0)
+                return dpi;
+        }
+        return 96;
+    }
+
+    private Size GetDpiAwareSmallIconSize() {
+        uint dpi = cachedTaskbarDpi;
+        int cx = NativeMethods.GetSystemMetricsForDpi(NativeMethods.SM_CXSMICON, dpi);
+        int cy = NativeMethods.GetSystemMetricsForDpi(NativeMethods.SM_CYSMICON, dpi);
+        if (cx > 0 && cy > 0)
+            return new Size(cx, cy);
+        return SystemInformation.SmallIconSize;
+    }
+
     public AppContext() {
         // Caffeinated.exe
         if (IsAnotherInstanceRunning()) {
@@ -130,6 +176,9 @@ public partial class AppContext : ApplicationContext {
         // Subscribe to session ending events
         SystemEvents.SessionEnding += SystemEvents_SessionEnding;
 
+        // Subscribe to display settings changes (DPI changes)
+        SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
         components = new Container();
         timer = new System.Windows.Forms.Timer(components);
         timer.Tick += new EventHandler(timer_Tick);
@@ -140,6 +189,8 @@ public partial class AppContext : ApplicationContext {
         updateTooltipTimer.Start();
 
         appSettings = new AppSettings();
+
+        cachedTaskbarDpi = GetTaskbarDpi();
 
         SetIsLightTheme();
 
@@ -231,26 +282,28 @@ public partial class AppContext : ApplicationContext {
             onIcon?.Dispose();
             offIcon?.Dispose();
 
+            Size iconSize = GetDpiAwareSmallIconSize();
+
             switch (appSettings.Icon) {
                 case TrayIcon.Mug:
                     if (isLightTheme) {
                         offIcon = new Icon(
                             Resources.Mug_Sleep_Black_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                         onIcon = new Icon(
                             Resources.Mug_Active_Black_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                             );
                     }
                     else {
                         offIcon = new Icon(
                             Resources.mug_sleep_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                         onIcon = new Icon(
                             Resources.mug_active_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                     }
 
@@ -259,21 +312,21 @@ public partial class AppContext : ApplicationContext {
                     if (isLightTheme) {
                         offIcon = new Icon(
                             Resources.Eye_zzz_Sleep_Black_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                         onIcon = new Icon(
                             Resources.Eye_zzz_Active_Black_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                     }
                     else {
                         offIcon = new Icon(
                             Resources.Eye_zzz_Sleep_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                         onIcon = new Icon(
                             Resources.Eye_zzz_Active_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                     }
                     break;
@@ -281,21 +334,21 @@ public partial class AppContext : ApplicationContext {
                     if (isLightTheme) {
                         offIcon = new Icon(
                         Resources.Caffeine_Black_icon,
-                        SystemInformation.SmallIconSize
+                        iconSize
                     );
                         onIcon = new Icon(
                             Resources.SleepEye_Black_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                     }
                     else {
                         offIcon = new Icon(
                             Resources.cup_coffee_icon_bw,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                         onIcon = new Icon(
                             Resources.cup_coffee_icon,
-                            SystemInformation.SmallIconSize
+                            iconSize
                         );
                     }
                     break;
@@ -383,9 +436,10 @@ public partial class AppContext : ApplicationContext {
         notifyIcon.ContextMenuStrip = contextMenu;
     }
 
-    private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme) {
-        int size = 24;
-        string cacheKey = $"{symbol}_{isLightTheme}";
+    private static Bitmap CreateSymbolImage(string symbol, bool isLightTheme, uint dpi = 96) {
+        float scale = dpi / 96f;
+        int size = (int)(24 * scale);
+        string cacheKey = $"{symbol}_{isLightTheme}_{dpi}";
 
         if (symbolCache.TryGetValue(cacheKey, out Bitmap? cached)) {
             return cached;
@@ -396,7 +450,7 @@ public partial class AppContext : ApplicationContext {
         graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 
-        using Font font = new("Segoe UI Symbol", 11f, FontStyle.Regular);
+        using Font font = new("Segoe UI Symbol", 11f * scale, FontStyle.Regular);
         Color textColor = isLightTheme ? Color.FromArgb(32, 32, 32) : Color.FromArgb(240, 240, 240);
         using SolidBrush brush = new(textColor);
 
