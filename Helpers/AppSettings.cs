@@ -80,6 +80,16 @@ namespace Caffeinated.Helpers {
             }
         }
 
+        private bool _keepMonitorOn = true;
+
+        public bool KeepMonitorOn {
+            get { return _keepMonitorOn; }
+            set {
+                _keepMonitorOn = value;
+                localSettings.Values[nameof(KeepMonitorOn)] = _keepMonitorOn.ToString();
+            }
+        }
+
         private ObservableCollection<int> _durations;
 
         public ObservableCollection<int> Durations {
@@ -131,11 +141,15 @@ namespace Caffeinated.Helpers {
                 _ => TooltipFormat.General,
             };
 
+            string KeepMonitorOnSetting = (string)localSettings.Values[nameof(KeepMonitorOn)];
+            KeepMonitorOnSetting ??= "true";
+            _keepMonitorOn = bool.Parse(KeepMonitorOnSetting);
+
             string DurationsSetting = (string)localSettings.Values[nameof(Durations)];
             DurationsSetting ??= "0,15,60,120,480";
             List<string> splitResult = DurationsSetting.Split(',').ToList();
 
-            _durations = new ObservableCollection<int>();
+            _durations = [];
             foreach (string item in splitResult) {
                 _durations.Add(int.Parse(item));
             }

@@ -558,7 +558,11 @@ public partial class AppContext : ApplicationContext {
 
     private void activate(int duration) {
         uint sleepDisabled = NativeMethods.ES_CONTINUOUS |
-                            NativeMethods.ES_DISPLAY_REQUIRED;
+                            NativeMethods.ES_SYSTEM_REQUIRED;
+
+        if (appSettings is null || appSettings.KeepMonitorOn) {
+            sleepDisabled |= NativeMethods.ES_DISPLAY_REQUIRED;
+        }
         uint previousState = NativeMethods.SetThreadExecutionState(sleepDisabled);
         if (previousState == 0) {
             ShowError();

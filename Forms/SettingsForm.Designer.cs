@@ -36,6 +36,7 @@ namespace Caffeinated {
             SettingsAtLaunchChkBox = new System.Windows.Forms.CheckBox();
             ActivateChkBox = new System.Windows.Forms.CheckBox();
             StartupChkBox = new System.Windows.Forms.CheckBox();
+            KeepMonitorOnChkBox = new System.Windows.Forms.CheckBox();
             tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             OffIconLbl = new System.Windows.Forms.Label();
             OnIconLbl = new System.Windows.Forms.Label();
@@ -126,17 +127,19 @@ namespace Caffeinated {
             tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             tableLayoutPanel1.ColumnCount = 1;
             tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 5);
-            tableLayoutPanel1.Controls.Add(SettingsAtLaunchChkBox, 0, 2);
-            tableLayoutPanel1.Controls.Add(ActivateChkBox, 0, 1);
             tableLayoutPanel1.Controls.Add(StartupChkBox, 0, 0);
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 0, 7);
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 6);
-            tableLayoutPanel1.Controls.Add(tableLayoutPanel5, 0, 3);
+            tableLayoutPanel1.Controls.Add(ActivateChkBox, 0, 1);
+            tableLayoutPanel1.Controls.Add(SettingsAtLaunchChkBox, 0, 2);
+            tableLayoutPanel1.Controls.Add(KeepMonitorOnChkBox, 0, 3);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel5, 0, 4);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel2, 0, 6);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel4, 0, 7);
+            tableLayoutPanel1.Controls.Add(tableLayoutPanel3, 0, 8);
             tableLayoutPanel1.Location = new System.Drawing.Point(130, 134);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
-            tableLayoutPanel1.RowCount = 8;
+            tableLayoutPanel1.RowCount = 9;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -223,6 +226,17 @@ namespace Caffeinated {
             StartupChkBox.Text = "Automatically launch at Windows startup";
             StartupChkBox.UseVisualStyleBackColor = true;
             StartupChkBox.CheckedChanged += StartupChkBox_CheckedChanged;
+            // 
+            // KeepMonitorOnChkBox
+            // 
+            KeepMonitorOnChkBox.AutoSize = true;
+            KeepMonitorOnChkBox.Location = new System.Drawing.Point(3, 78);
+            KeepMonitorOnChkBox.Name = "KeepMonitorOnChkBox";
+            KeepMonitorOnChkBox.Size = new System.Drawing.Size(215, 19);
+            KeepMonitorOnChkBox.TabIndex = 17;
+            KeepMonitorOnChkBox.Text = "Keep monitor on while activated";
+            KeepMonitorOnChkBox.UseVisualStyleBackColor = true;
+            KeepMonitorOnChkBox.CheckedChanged += KeepMonitorOnChkBox_CheckedChanged;
             // 
             // tableLayoutPanel3
             // 
@@ -650,5 +664,6 @@ namespace Caffeinated {
         private System.Windows.Forms.RadioButton specificTooltipRDBTN;
         private System.Windows.Forms.ToolTip tooltipProvider;
         private System.Windows.Forms.Button exceptionLogBtn;
+        private System.Windows.Forms.CheckBox KeepMonitorOnChkBox;
     }
 }

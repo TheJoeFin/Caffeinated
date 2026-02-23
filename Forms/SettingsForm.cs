@@ -27,6 +27,9 @@ public partial class SettingsForm : BaseForm {
         if (appSettings.ActivateOnLaunch)
             ActivateChkBox.Checked = true;
 
+        if (appSettings.KeepMonitorOn)
+            KeepMonitorOnChkBox.Checked = true;
+
         SetupDurationsListView();
 
         setStartupCheckBox();
@@ -49,6 +52,7 @@ public partial class SettingsForm : BaseForm {
         label1.ForeColor = ForeColor;
         label2.ForeColor = ForeColor;
         label3.ForeColor = ForeColor;
+        KeepMonitorOnChkBox.ForeColor = ForeColor;
         OffIconLbl.ForeColor = ForeColor;
         OnIconLbl.ForeColor = ForeColor;
         CustomDurationLBL.ForeColor = ForeColor;
@@ -176,7 +180,8 @@ public partial class SettingsForm : BaseForm {
             AutoSize = true,
             Font = new Font(Font, FontStyle.Bold),
             Padding = new Padding(5),
-            Margin = new Padding(0)
+            Margin = new Padding(0),
+            Anchor = AnchorStyles.Right
         };
         
         Label headerDuration = new() {
@@ -239,7 +244,8 @@ public partial class SettingsForm : BaseForm {
                 Checked = duration.Minutes == appSettings.DefaultDuration,
                 Tag = duration,
                 Margin = new Padding(5),
-                Text = ""
+                Text = "",
+                Anchor = AnchorStyles.Right
             };
             radioBtn.CheckedChanged += DurationRadio_CheckedChanged;
             
@@ -470,6 +476,10 @@ public partial class SettingsForm : BaseForm {
 
     private void SettingsAtLaunchChkBox_CheckedChanged(object sender, EventArgs e) {
         appSettings.ShowMessageOnLaunch = SettingsAtLaunchChkBox.Checked;
+    }
+
+    private void KeepMonitorOnChkBox_CheckedChanged(object sender, EventArgs e) {
+        appSettings.KeepMonitorOn = KeepMonitorOnChkBox.Checked;
     }
 
     private void generalTooltipRDBTN_Click(object sender, EventArgs e) {
