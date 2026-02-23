@@ -90,6 +90,29 @@ namespace Caffeinated.Helpers {
             }
         }
 
+        private bool _processWatchEnabled;
+
+        public bool ProcessWatchEnabled {
+            get { return _processWatchEnabled; }
+            set {
+                _processWatchEnabled = value;
+                localSettings.Values[nameof(ProcessWatchEnabled)] = _processWatchEnabled.ToString();
+            }
+        }
+
+        private List<string> _watchedProcessNames = [];
+
+        /// <summary>
+        /// Process names to watch (case-sensitive, without .exe extension).
+        /// </summary>
+        public List<string> WatchedProcessNames {
+            get { return _watchedProcessNames; }
+            set {
+                _watchedProcessNames = value ?? [];
+                localSettings.Values[nameof(WatchedProcessNames)] = string.Join("|", _watchedProcessNames);
+            }
+        }
+
         private ObservableCollection<int> _durations;
 
         public ObservableCollection<int> Durations {

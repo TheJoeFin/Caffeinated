@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Caffeinated;
 public partial class SettingsForm : BaseForm {
     readonly BindingList<Duration> Durations;
     readonly AppSettings appSettings;
+    private CheckBox? _processWatchChkBox;
+    private TextBox? _processNamesTextBox;
 
     public SettingsForm(AppSettings passedAppSettings) : base() {
         InitializeComponent();
@@ -31,6 +34,7 @@ public partial class SettingsForm : BaseForm {
             KeepMonitorOnChkBox.Checked = true;
 
         SetupDurationsListView();
+        SetupProcessWatchUI();
 
         setStartupCheckBox();
         setRadioButtons();
@@ -122,6 +126,15 @@ public partial class SettingsForm : BaseForm {
             }
         }
         
+        // Update process watch controls
+        if (_processWatchChkBox is not null)
+            _processWatchChkBox.ForeColor = ForeColor;
+
+        if (_processNamesTextBox is not null) {
+            _processNamesTextBox.BackColor = IsDarkMode ? Color.FromArgb(48, 48, 48) : SystemColors.Window;
+            _processNamesTextBox.ForeColor = ForeColor;
+        }
+
         // Force refresh
         Refresh();
     }
@@ -488,6 +501,101 @@ public partial class SettingsForm : BaseForm {
 
     private void specificTooltipRDBTN_Click(object sender, EventArgs e) {
         appSettings.TooltipFormat = TooltipFormat.Specific;
+    }
+
+    private void SetupProcessWatchUI() {
+        // Add a spacer row
+        tableLayoutPanel1.RowCount++;
+        tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 12F));
+
+        // Create a GroupBox for the process watch section
+        GroupBox processWatchGroup = new() {
+            Text = "Process Watch",
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            Dock = DockStyle.Fill,
+            Padding = new Padding(8),
+            ForeColor = ForeColor
+        };
+
+        TableLayoutPanel innerTlp = new() {
+            AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 3,
+            Padding = new Padding(0),
+            Margin = new Padding(0)
+        };
+        innerTlp.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        innerTlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        innerTlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        innerTlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+        _processWatchChkBox = new CheckBox {
+            Text = "Activate while specific processes are running",
+            AutoSize = true,
+            Checked = appSettings.ProcessWatchEnabled,
+            Margin = new Padding(3),
+            ForeColor = ForeColor,
+            AccessibleName = "Enable process watch",
+            AccessibleDescription = "When enabled, Caffeinated automatically prevents sleep while any listed process is running"
+        };
+        _processWatchChkBox.CheckedChanged += ProcessWatchChkBox_CheckedChanged;
+
+        _processNamesTextBox = new TextBox {
+            Multiline = true,
+            ScrollBars = ScrollBars.Vertical,
+            Height = 80,
+            Dock = DockStyle.Fill,
+            Margin = new Padding(3),
+            Text = string.Join(Environment.NewLine, appSettings.WatchedProcessNames),
+            Enabled = appSettings.ProcessWatchEnabled,
+            AccessibleName = "Watched process names",
+            AccessibleDescription = "Enter one process name per line, as shown in Task Manager without the .exe extension"
+        };
+        _processNamesTextBox.Leave += ProcessNamesTextBox_Leave;
+
+        Label hintLabel = new() {
+            Text = "One process name per line (as in Task Manager, without .exe)",
+            AutoSize = true,
+            Margin = new Padding(3, 0, 3, 3),
+            ForeColor = SystemColors.GrayText
+        };
+
+        innerTlp.Controls.Add(_processWatchChkBox, 0, 0);
+        innerTlp.Controls.Add(_processNamesTextBox, 0, 1);
+        innerTlp.Controls.Add(hintLabel, 0, 2);
+        processWatchGroup.Controls.Add(innerTlp);
+
+        int groupRow = tableLayoutPanel1.RowCount;
+        tableLayoutPanel1.RowCount++;
+        tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        tableLayoutPanel1.Controls.Add(processWatchGroup, 0, groupRow);
+    }
+
+    private void ProcessWatchChkBox_CheckedChanged(object? sender, EventArgs e) {
+        if (_processWatchChkBox is null)
+            return;
+
+        appSettings.ProcessWatchEnabled = _processWatchChkBox.Checked;
+
+        if (_processNamesTextBox is not null)
+            _processNamesTextBox.Enabled = _processWatchChkBox.Checked;
+    }
+
+    private void ProcessNamesTextBox_Leave(object? sender, EventArgs e) {
+        if (_processNamesTextBox is null)
+            return;
+
+        List<string> names = _processNamesTextBox.Text
+            .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+            .Select(n => n.Trim())
+            .Where(n => n.Length > 0)
+            .Distinct()
+            .ToList();
+
+        appSettings.WatchedProcessNames = names;
     }
 
     private void exceptionLogBtn_Click(object? sender, EventArgs e) {

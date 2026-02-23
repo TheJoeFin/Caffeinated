@@ -33,6 +33,9 @@ public partial class AppContext : ApplicationContext {
     private static readonly Dictionary<string, Bitmap> symbolCache = [];
     private readonly MessageWindow? messageWindow;
     private uint cachedTaskbarDpi;
+    private readonly ProcessWatcher? processWatcher;
+    private bool processWatchAutoActivated;
+    private string? autoActivatedProcessName;
 
     private const int WM_QUERYENDSESSION = 0x0011;
     private const int WM_ENDSESSION = 0x0016;
@@ -83,6 +86,7 @@ public partial class AppContext : ApplicationContext {
             // 1. Stop all timers immediately
             timer?.Stop();
             updateTooltipTimer?.Stop();
+            processWatcher?.Stop();
 
             // 2. Deactivate caffeination
             _ = NativeMethods.SetThreadExecutionState(NativeMethods.ES_CONTINUOUS);
@@ -218,6 +222,11 @@ public partial class AppContext : ApplicationContext {
         else {
             deactivate();
         }
+
+        // Initialize process watcher
+        processWatcher = new ProcessWatcher(5000);
+        processWatcher.StateChanged += ProcessWatcher_StateChanged;
+        RefreshProcessWatcher();
 
         if (appSettings.ShowMessageOnLaunch || appSettings.IsFirstLaunch) {
             if (appSettings.IsFirstLaunch)
@@ -502,6 +511,7 @@ public partial class AppContext : ApplicationContext {
         setContextMenu();
         SetIsLightTheme();
         setIcons();
+        RefreshProcessWatcher();
 
         if (notifyIcon != null) {
             if (isActivated) {
@@ -593,12 +603,19 @@ public partial class AppContext : ApplicationContext {
             return;
 
         if (notifyIcon.Icon == offIcon) {
-            notifyIcon.Text = "Caffeinated: sleep allowed";
+            notifyIcon.Text = appSettings?.ProcessWatchEnabled == true
+                ? "Caffeinated: sleep allowed (watching for processes)"
+                : "Caffeinated: sleep allowed";
+            return;
+        }
+
+        if (processWatchAutoActivated && autoActivatedProcessName is not null) {
+            notifyIcon.Text = $"Caffeinated: Active (process: {autoActivatedProcessName})";
             return;
         }
 
         if (endTime is null) {
-            notifyIcon.Text = $"Caffeinated: No sleep indefinitely";
+            notifyIcon.Text = "Caffeinated: No sleep indefinitely";
             return;
         }
 
@@ -649,6 +666,8 @@ public partial class AppContext : ApplicationContext {
             ShowError();
         }
         isActivated = false;
+        processWatchAutoActivated = false;
+        autoActivatedProcessName = null;
 
         if (notifyIcon != null) {
             notifyIcon.Icon = offIcon;
@@ -656,8 +675,52 @@ public partial class AppContext : ApplicationContext {
         }
     }
 
+    private void RefreshProcessWatcher() {
+        if (processWatcher is null || appSettings is null)
+            return;
+
+        if (appSettings.ProcessWatchEnabled && appSettings.WatchedProcessNames.Count > 0) {
+            processWatcher.ProcessNames = appSettings.WatchedProcessNames;
+            processWatcher.Start();
+        }
+        else {
+            processWatcher.Stop();
+            processWatcher.ProcessNames = [];
+
+            // If currently auto-activated, deactivate
+            if (processWatchAutoActivated) {
+                deactivate();
+            }
+        }
+    }
+
+    private void ProcessWatcher_StateChanged(object? sender, ProcessWatchStateChangedEventArgs e) {
+        if (e.IsAnyRunning) {
+            // A watched process started — auto-activate indefinitely
+            if (!isActivated) {
+                activate(0);
+                processWatchAutoActivated = true;
+                autoActivatedProcessName = e.MatchedProcessName;
+                updateNotifyIconText();
+            }
+            else if (processWatchAutoActivated) {
+                // Already auto-activated, update matched name
+                autoActivatedProcessName = e.MatchedProcessName;
+                updateNotifyIconText();
+            }
+            // If user manually activated, don't override
+        }
+        else {
+            // No watched processes running
+            if (processWatchAutoActivated) {
+                deactivate();
+            }
+        }
+    }
+
     private void exitItem_Click(object? Sender, EventArgs e) {
         deactivate();
+        processWatcher?.Dispose();
         notifyIcon?.Dispose();
 
         ExitThread();
@@ -676,6 +739,7 @@ public partial class AppContext : ApplicationContext {
             // Clear symbol cache
             ClearSymbolCache();
 
+            processWatcher?.Dispose();
             timer?.Dispose();
             updateTooltipTimer?.Dispose();
             messageWindow?.Dispose();
