@@ -41,9 +41,9 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.1" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="10.0.2" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Formats.Asn1" Version="10.0.1" />
-    <PackageReference Include="System.IO.Packaging" Version="10.0.1" />
+    <PackageReference Include="System.Formats.Asn1" Version="10.0.2" />
+    <PackageReference Include="System.IO.Packaging" Version="10.0.2" />
   </ItemGroup>
 </Project>
